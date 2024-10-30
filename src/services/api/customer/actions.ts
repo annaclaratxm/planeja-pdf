@@ -6,12 +6,12 @@ import { z } from 'zod'
 import { deleteCustomerSchema, upsertCustomerSchema } from './schema'
 
 export async function getUserCustomers() {
-    const session = await auth();
+    //const session = await auth();
 
     const customers = await prisma.customer.findMany({
-        where: {
-            userId: session?.userId?.id
-        }
+        // where: {
+        //     userId: //session?.userId?.id
+        // }
     })
 
     return customers
