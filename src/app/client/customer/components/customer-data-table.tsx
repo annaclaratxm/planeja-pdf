@@ -21,6 +21,7 @@ import { ColumnDef, getCoreRowModel, useReactTable } from "@tanstack/react-table
 import { Plus, Search } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React from "react";
+import { CustomerModal } from "./customer-modal";
 
 interface CustomerDataTableProps {
   data: Customer[];
@@ -29,6 +30,7 @@ interface CustomerDataTableProps {
 export function CustomerDataTable({ data }: CustomerDataTableProps) {
   const router = useRouter();
   const [customers] = React.useState<Customer[]>(data);
+  const [isModalOpen, setIsModalOpen] = React.useState(false);
 
   const columns: ColumnDef<Customer>[] = [
     {
@@ -48,10 +50,11 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
     },
     {
       accessorKey: "birthdate",
-      header: "Data",
-      cell: ({ row }) => (
-        <span>{row.getValue("birthdate") ? new Date(row.getValue("birthdate")).toLocaleDateString() : "N/A"}</span>
-      ),
+      header: "Data de nascimento",
+      cell: ({ row }) => {
+        const birthdate = row.getValue("birthdate");
+        return <span>{birthdate ? new Date(birthdate as Date).toLocaleDateString() : "N/A"}</span>;
+      },
     },
     {
       id: "actions",
@@ -95,10 +98,18 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
     <div className="w-full space-y-4">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold text-white">Clientes</h2>
-        <Button variant="default">
+        <Button
+          variant="destructive"
+          onClick={() => setIsModalOpen(true)}
+          className="bg-green-500 hover:bg-green-600"
+        >
           <Plus className="mr-2 h-4 w-4" />
           Adicionar novo cliente
         </Button>
+        <CustomerModal
+          isOpen={isModalOpen}
+          onClose={() => setIsModalOpen(false)}
+        />
       </div>
       <div className="relative">
         <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 transform text-gray-400" />

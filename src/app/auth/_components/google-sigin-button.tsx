@@ -4,7 +4,7 @@ import { FaGoogle } from "react-icons/fa";
 
 export function GoogleSignInButton() {
   const loginWithGoogle = () => {
-    signIn("google", { callbackUrl: "http://localhost:3000/app" });
+    signIn("google", { callbackUrl: "http://localhost:3000/client" });
   };
 
   return (

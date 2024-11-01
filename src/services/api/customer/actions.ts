@@ -1,26 +1,45 @@
 'use server'
 
-import { auth } from '@/lib/auth'
+import { authOptions } from '@/lib/auth'
+
 import { prisma } from '@/lib/prisma'
+import { getServerSession } from 'next-auth'
 import { z } from 'zod'
 import { deleteCustomerSchema, upsertCustomerSchema } from './schema'
 
 export async function getUserCustomers() {
-    //const session = await auth();
+    const session = await getServerSession(authOptions)
+
+    if (!session) {
+        throw new Error("User is not logged");
+    }
 
     const customers = await prisma.customer.findMany({
-        // where: {
-        //     userId: //session?.userId?.id
-        // }
-    })
+        where: {
+            user: {
+                email: session.user.email
+            }
+        },
+        select: {
+            name: true,
+            id: true,
+            phone: true,
+            email: true,
+            birthdate: true,
+            userId: true,
+        },
+    });
 
-    return customers
+    return customers.map(customer => ({
+        ...customer,
+        birthdate: customer.birthdate ? customer.birthdate.toISOString() : null,
+    }));
 }
 
 export async function upsertCustomer(input: z.infer<typeof upsertCustomerSchema>) {
-    const session = await auth()
+    const session = await getServerSession(authOptions)
 
-    if (!session?.user?.id) {
+    if (!session?.user?.email) {
         return {
             error: 'Not authorized',
             data: null,
@@ -31,7 +50,9 @@ export async function upsertCustomer(input: z.infer<typeof upsertCustomerSchema>
         const customer = await prisma.customer.findUnique({
             where: {
                 id: input.id,
-                userId: session?.user?.id,
+                user: {
+                    email: session.user.email
+                }
             },
             select: {
                 id: true,
@@ -48,7 +69,9 @@ export async function upsertCustomer(input: z.infer<typeof upsertCustomerSchema>
         const updatedCustomer = await prisma.customer.update({
             where: {
                 id: input.id,
-                userId: session?.user?.id,
+                user: {
+                    email: session.user.email
+                }
             },
             data: {
                 birthdate: input.birthdate,
@@ -71,13 +94,31 @@ export async function upsertCustomer(input: z.infer<typeof upsertCustomerSchema>
         }
     }
 
+    const user = await prisma.user.findUnique({
+        where: {
+            email: session.user.email
+
+        },
+        select: {
+            id: true
+        }
+    })
+
+    if (!user || !user.id) {
+        return {
+            error: 'User not founded',
+            data: null,
+        }
+
+    }
+
     const customer = await prisma.customer.create({
         data: {
             name: input.name,
             phone: input.phone ?? "",
             email: input.email,
             birthdate: input.birthdate,
-            userId: session?.user?.id,
+            userId: user.id,
         },
     })
 
@@ -85,7 +126,7 @@ export async function upsertCustomer(input: z.infer<typeof upsertCustomerSchema>
 }
 
 export async function deleteCustomer(input: z.infer<typeof deleteCustomerSchema>) {
-    const session = await auth()
+    const session = await getServerSession(authOptions)
 
     if (!session?.user?.id) {
         return {
