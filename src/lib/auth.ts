@@ -1,29 +1,27 @@
+// route.ts
+import { prisma } from "@/lib/prisma";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
 import NextAuth from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
-import { prisma } from "./prisma";
 
-export const { auth, handlers, signIn, signOut } = NextAuth({
-  providers: [
-    GoogleProvider({
-      clientId: process.env.GOOGLE_CLIENT_ID ?? "",
-      clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
-      authorization: {
-        params: {
-          prompt: "consent",
-          access_type: "offline",
-          response_type: "code",
-        },
-      },
-    }),
-  ],
+export const authOptions = {
+    providers: [
+        GoogleProvider({
+            clientId: process.env.GOOGLE_CLIENT_ID ?? "",
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET ?? "",
+        }),
+    ],
+    adapter: PrismaAdapter(prisma),
+    pages: {
+        signIn: '/auth',
+        error: '/auth',
+        signOut: '/auth',
+        verifyRequest: '/auth',
+        newUser: '/client'
+    },
+    secret: process.env.NEXTAUTH_SECRET,
+};
 
-  pages: {
-    signIn: "/auth",
-    error: "/auth",
-    signOut: "/auth",
-    verifyRequest: "/auth",
-    newUser: "/app",
-  },
-  adapter: PrismaAdapter(prisma),
-});
+const handler = NextAuth(authOptions);
+export { handler as GET, handler as POST };
+

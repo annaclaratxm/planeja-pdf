@@ -1,4 +1,3 @@
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -47,8 +46,9 @@ model User {
   stripeSubscriptionStatus String?
   stripePriceId            String?
 
-  accounts Account[]
-  sessions Session[]
+  accounts  Account[]
+  sessions  Session[]
+  customers Customer[]
 }
 
 model VerificationToken {
@@ -60,9 +60,12 @@ model VerificationToken {
 }
 
 model Customer {
-  id String @id @default(cuid())
-  name String
-  phone String
-  email String?
+  id        String    @id @default(cuid())
+  name      String
+  phone     String
+  email     String?
   birthdate DateTime?
+  userId    String
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
