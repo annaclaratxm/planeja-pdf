@@ -29,16 +29,16 @@ import { Customer } from '@/services/api/customer/types'
 
 const formSchema = z.object({
     name: z.string().min(2, {
-        message: 'Name must be at least 2 characters.',
+        message: 'O nome precisa ter ao menos dois dígitos.',
     }),
     phone: z.string().min(10, {
-        message: 'Phone number must be at least 10 digits.',
+        message: 'O telefone precisa ter ao menos dois dígitos.',
     }),
     email: z.string().email({
-        message: 'Please enter a valid email address.',
+        message: 'Por favor, insira um endereço de e-mail válido.',
     }),
     birthdate: z.string().refine((date) => !isNaN(Date.parse(date)), {
-        message: 'Please enter a valid date.',
+        message: 'Por favor, insira uma data válida.',
     }),
 })
 
@@ -80,6 +80,15 @@ export function CustomerModal({
 
     async function onSubmit(values: z.infer<typeof formSchema>) {
         try {
+            // const isUnique = await checkIfUnique(data);
+            // if (!isUnique) {
+            //     toast({
+            //         title: "Erro",
+            //         description: "Os dados fornecidos já existem.",
+            //     });
+            //     return;
+            // }
+
             if (customer) {
                 await upsertCustomer({
                     ...values,
@@ -95,13 +104,14 @@ export function CustomerModal({
                     ...values,
                     birthdate: new Date(values.birthdate),
                 })
-                
+
                 toast({
                     title: 'Cliente cadastrado',
                     description: 'O cliente foi criado com sucesso.',
                 })
             }
             onClose()
+            window.location.reload();
         } catch {
             toast({
                 title: 'Erro',
@@ -146,7 +156,7 @@ export function CustomerModal({
                                 <FormItem>
                                     <FormLabel>Telefone</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Telefone do cliente" {...field} />
+                                        <Input placeholder="Telefone do cliente" maxLength={11} {...field} />
                                     </FormControl>
                                     <FormMessage />
                                 </FormItem>

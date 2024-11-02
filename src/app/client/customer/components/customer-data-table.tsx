@@ -13,7 +13,6 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
 
-
 import { deleteCustomer } from "@/services/api/customer/actions";
 import { Customer } from "@/services/api/customer/types";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
@@ -85,13 +84,22 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
   });
 
   const handleDeleteCustomer = async (id: string) => {
-    await deleteCustomer({ id });
-    router.refresh();
+    console.log("Deleting customer with ID:", id);
+    try {
+      await deleteCustomer({ id });
+      router.refresh();
 
-    toast({
-      title: "Cliente Deletado",
-      description: "O cliente foi removido com sucesso.",
-    });
+      toast({
+        title: "Cliente Deletado",
+        description: "O cliente foi removido com sucesso.",
+      });
+    } catch (error) {
+      console.error("Failed to delete customer:", error);
+      toast({
+        title: "Erro ao deletar cliente",
+        description: "Ocorreu um erro ao tentar deletar o cliente.",
+      });
+    }
   };
 
   return (
@@ -125,22 +133,23 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
-                    {typeof header.column.columnDef.header === "function"
+                    {typeof header.column.columnDef.header === 'function'
                       ? header.column.columnDef.header(header.getContext())
                       : header.column.columnDef.header}
                   </TableHead>
-
                 ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
             {
-              table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>{cell.renderValue() as React.ReactNode}</TableCell>
+                      <TableCell key={cell.id}>
+                        {typeof cell.column.columnDef.cell === 'function' ? cell.column.columnDef.cell(cell.getContext()) : null}
+                      </TableCell>
                     ))}
                   </TableRow>
                 ))
