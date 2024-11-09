@@ -30,6 +30,7 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
   const router = useRouter();
   const [customers] = React.useState<Customer[]>(data);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [selectedCustomer, setSelectedCustomer] = React.useState<Customer | undefined>(undefined);
 
   const columns: ColumnDef<Customer>[] = [
     {
@@ -68,6 +69,9 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Ações</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => handleEditCustomer(row.original)}>
+              Editar
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleDeleteCustomer(row.original.id)}>
               Deletar
             </DropdownMenuItem>
@@ -83,23 +87,19 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
     getCoreRowModel: getCoreRowModel(),
   });
 
-  const handleDeleteCustomer = async (id: string) => {
-    console.log("Deleting customer with ID:", id);
-    try {
-      await deleteCustomer({ id });
-      router.refresh();
+  const handleEditCustomer = (customer: Customer) => {
+    setSelectedCustomer(customer);
+    setIsModalOpen(true);
+  };
 
-      toast({
-        title: "Cliente Deletado",
-        description: "O cliente foi removido com sucesso.",
-      });
-    } catch (error) {
-      console.error("Failed to delete customer:", error);
-      toast({
-        title: "Erro ao deletar cliente",
-        description: "Ocorreu um erro ao tentar deletar o cliente.",
-      });
-    }
+  const handleDeleteCustomer = async (id: string) => {
+    await deleteCustomer({ id });
+    router.refresh();
+
+    toast({
+      title: "Cliente Deletado",
+      description: "O cliente foi removido com sucesso.",
+    });
   };
 
   return (
@@ -108,7 +108,10 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
         <h2 className="text-2xl font-bold text-white">Clientes</h2>
         <Button
           variant="destructive"
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setSelectedCustomer(undefined);
+            setIsModalOpen(true);
+          }}
           className="bg-green-500 hover:bg-green-600"
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -116,7 +119,11 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
         </Button>
         <CustomerModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedCustomer(undefined);
+          }}
+          customer={selectedCustomer}
         />
       </div>
       <div className="relative">
