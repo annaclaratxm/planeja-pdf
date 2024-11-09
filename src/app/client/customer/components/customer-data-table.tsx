@@ -18,7 +18,6 @@ import { Customer } from "@/services/api/customer/types";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { Plus, Search } from "lucide-react";
-import { useRouter } from "next/navigation";
 import React from "react";
 import { CustomerModal } from "./customer-modal";
 
@@ -27,7 +26,6 @@ interface CustomerDataTableProps {
 }
 
 export function CustomerDataTable({ data }: CustomerDataTableProps) {
-  const router = useRouter();
   const [customers] = React.useState<Customer[]>(data);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedCustomer, setSelectedCustomer] = React.useState<Customer | undefined>(undefined);
@@ -94,7 +92,8 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
 
   const handleDeleteCustomer = async (id: string) => {
     await deleteCustomer({ id });
-    router.refresh();
+    
+    window.location.reload();
 
     toast({
       title: "Cliente Deletado",

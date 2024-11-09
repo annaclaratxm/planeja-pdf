@@ -13,6 +13,8 @@ import {
     navigationMenuTriggerStyle,
 } from "@/components/ui/navigation-menu"
 import { cn } from "@/lib/utils"
+import { signOut } from "next-auth/react"
+import router from "next/router"
 
 export default function MainNavBar() {
     const pathname = usePathname()
@@ -67,8 +69,8 @@ export default function MainNavBar() {
                         variant="destructive"
                         className="bg-green-500 hover:bg-green-600"
                         onClick={() => {
-                            // Add logout logic here
-                            console.log("Logout clicked")
+                            signOut();
+                            router.push("/auth/signin");
                         }}
                     >
                         Sair
