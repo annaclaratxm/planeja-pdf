@@ -13,13 +13,11 @@ import {
 } from "@/components/ui/table";
 import { toast } from "@/hooks/use-toast";
 
-
 import { deleteCustomer } from "@/services/api/customer/actions";
 import { Customer } from "@/services/api/customer/types";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef, getCoreRowModel, useReactTable } from "@tanstack/react-table";
 import { Plus, Search } from "lucide-react";
-import { useRouter } from "next/navigation";
 import React from "react";
 import { CustomerModal } from "./customer-modal";
 
@@ -28,9 +26,9 @@ interface CustomerDataTableProps {
 }
 
 export function CustomerDataTable({ data }: CustomerDataTableProps) {
-  const router = useRouter();
   const [customers] = React.useState<Customer[]>(data);
   const [isModalOpen, setIsModalOpen] = React.useState(false);
+  const [selectedCustomer, setSelectedCustomer] = React.useState<Customer | undefined>(undefined);
 
   const columns: ColumnDef<Customer>[] = [
     {
@@ -69,6 +67,9 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
           <DropdownMenuContent align="end">
             <DropdownMenuLabel>Ações</DropdownMenuLabel>
             <DropdownMenuSeparator />
+            <DropdownMenuItem onClick={() => handleEditCustomer(row.original)}>
+              Editar
+            </DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleDeleteCustomer(row.original.id)}>
               Deletar
             </DropdownMenuItem>
@@ -84,9 +85,15 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const handleEditCustomer = (customer: Customer) => {
+    setSelectedCustomer(customer);
+    setIsModalOpen(true);
+  };
+
   const handleDeleteCustomer = async (id: string) => {
     await deleteCustomer({ id });
-    router.refresh();
+    
+    window.location.reload();
 
     toast({
       title: "Cliente Deletado",
@@ -100,7 +107,10 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
         <h2 className="text-2xl font-bold text-white">Clientes</h2>
         <Button
           variant="destructive"
-          onClick={() => setIsModalOpen(true)}
+          onClick={() => {
+            setSelectedCustomer(undefined);
+            setIsModalOpen(true);
+          }}
           className="bg-green-500 hover:bg-green-600"
         >
           <Plus className="mr-2 h-4 w-4" />
@@ -108,7 +118,11 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
         </Button>
         <CustomerModal
           isOpen={isModalOpen}
-          onClose={() => setIsModalOpen(false)}
+          onClose={() => {
+            setIsModalOpen(false);
+            setSelectedCustomer(undefined);
+          }}
+          customer={selectedCustomer}
         />
       </div>
       <div className="relative">
@@ -125,22 +139,23 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>
-                    {typeof header.column.columnDef.header === "function"
+                    {typeof header.column.columnDef.header === 'function'
                       ? header.column.columnDef.header(header.getContext())
                       : header.column.columnDef.header}
                   </TableHead>
-
                 ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
             {
-              table.getRowModel().rows?.length ? (
+              table.getRowModel().rows.length ? (
                 table.getRowModel().rows.map((row) => (
                   <TableRow key={row.id}>
                     {row.getVisibleCells().map((cell) => (
-                      <TableCell key={cell.id}>{cell.renderValue() as React.ReactNode}</TableCell>
+                      <TableCell key={cell.id}>
+                        {typeof cell.column.columnDef.cell === 'function' ? cell.column.columnDef.cell(cell.getContext()) : null}
+                      </TableCell>
                     ))}
                   </TableRow>
                 ))

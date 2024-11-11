@@ -128,7 +128,7 @@ export async function upsertCustomer(input: z.infer<typeof upsertCustomerSchema>
 export async function deleteCustomer(input: z.infer<typeof deleteCustomerSchema>) {
     const session = await getServerSession(authOptions)
 
-    if (!session?.user?.id) {
+    if (!session?.user?.email) {
         return {
             error: 'Not authorized',
             data: null,
