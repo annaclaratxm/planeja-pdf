@@ -104,7 +104,7 @@ export default function NewBudgetPage() {
                             type="text"
                             id="name"
                             placeholder="Digite aqui"
-                            className="w-full rounded-md bg-[#001A4B] px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
+                            className="w-full rounded-md bg-[#132236] px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
                         />
                     </div>
 
@@ -118,7 +118,7 @@ export default function NewBudgetPage() {
                                 type="text"
                                 id="client"
                                 placeholder="Pesquisar cliente"
-                                className="w-full rounded-md bg-[#001A4B] py-3 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
+                                className="w-full rounded-md bg-[#132236] py-3 pl-10 pr-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
                             />
                         </div>
                     </div>
@@ -144,7 +144,7 @@ export default function NewBudgetPage() {
                                 placeholder="Nome da categoria"
                                 value={category.name}
                                 onChange={(e) => updateCategoryName(category.id, e.target.value)}
-                                className="w-full rounded-md bg-[#00205B] px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
+                                className="w-full rounded-md bg-[#132236] px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
                             />
 
                             <div className="space-y-4">
@@ -158,7 +158,7 @@ export default function NewBudgetPage() {
                                             placeholder="Nome do produto"
                                             value={product.name}
                                             onChange={(e) => updateProduct(category.id, product.id, 'name', e.target.value)}
-                                            className="w-full rounded-md bg-[#00205B] px-4 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
+                                            className="w-full rounded-md bg-[#132236] px-4 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
                                         />
                                         <div className="flex items-center">
                                             <span className="text-white text-sm">R$</span>
@@ -168,7 +168,7 @@ export default function NewBudgetPage() {
                                             placeholder="00.00"
                                             value={product.price}
                                             onChange={(e) => updateProduct(category.id, product.id, 'price', e.target.value)}
-                                            className="w-full rounded-md bg-[#00205B] px-4 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
+                                            className="w-full rounded-md bg-[#132236] px-4 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
                                         />
                                         <button
                                             type="button"
