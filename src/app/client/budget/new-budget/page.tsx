@@ -83,8 +83,8 @@ export default function NewBudgetPage() {
     }
 
     return (
-        <div className="min-h-screen bg-[#00205B] p-8">
-            <div className="mx-auto max-w-3xl">
+        <div className="min-h-screen bg-[#0a192f] p-8">
+            <div className="mx-auto max-w-7xl">
                 <button
                     onClick={() => router.back()}
                     className="mb-6 flex items-center text-white hover:text-gray-300"
@@ -124,59 +124,67 @@ export default function NewBudgetPage() {
                     </div>
 
                     {categories.map((category, categoryIndex) => (
-                        <div key={category.id} className="space-y-4 bg-[#001A4B] p-4 rounded-md">
+                        <div key={category.id} className="space-y-4 bg-[#0a192f] p-4 rounded-md">
                             <div className="flex items-center justify-between">
-                                <input
-                                    type="text"
-                                    placeholder="Nome da categoria"
-                                    value={category.name}
-                                    onChange={(e) => updateCategoryName(category.id, e.target.value)}
-                                    className="w-full rounded-md bg-[#00205B] px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
-                                />
+                                <label className="block text-sm font-medium text-white">
+                                    Categoria
+                                </label>
                                 {categoryIndex > 0 && (
                                     <button
                                         type="button"
                                         onClick={() => removeCategory(category.id)}
-                                        className="ml-2 text-red-500 hover:text-red-400"
+                                        className="text-red-500 hover:text-red-400"
                                     >
-                                        <Trash2 className="h-5 w-5" />
+                                        <Trash2 className="h-4 w-4" />
                                     </button>
                                 )}
                             </div>
+                            <input
+                                type="text"
+                                placeholder="Nome da categoria"
+                                value={category.name}
+                                onChange={(e) => updateCategoryName(category.id, e.target.value)}
+                                className="w-full rounded-md bg-[#00205B] px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
+                            />
 
-                            {category.products.map((product) => (
-                                <div key={product.id} className="grid grid-cols-[1fr,auto,120px,auto] gap-4">
-                                    <input
-                                        type="text"
-                                        placeholder="Nome do produto"
-                                        value={product.name}
-                                        onChange={(e) => updateProduct(category.id, product.id, 'name', e.target.value)}
-                                        className="w-full rounded-md bg-[#00205B] px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
-                                    />
-                                    <div className="flex items-center">
-                                        <span className="text-white">R$</span>
+                            <div className="space-y-4">
+                                <label className="block text-sm font-medium text-white">
+                                    Produtos
+                                </label>
+                                {category.products.map((product) => (
+                                    <div key={product.id} className="grid grid-cols-[1fr,auto,120px,auto] gap-4 items-center">
+                                        <input
+                                            type="text"
+                                            placeholder="Nome do produto"
+                                            value={product.name}
+                                            onChange={(e) => updateProduct(category.id, product.id, 'name', e.target.value)}
+                                            className="w-full rounded-md bg-[#00205B] px-4 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
+                                        />
+                                        <div className="flex items-center">
+                                            <span className="text-white text-sm">R$</span>
+                                        </div>
+                                        <input
+                                            type="text"
+                                            placeholder="00.00"
+                                            value={product.price}
+                                            onChange={(e) => updateProduct(category.id, product.id, 'price', e.target.value)}
+                                            className="w-full rounded-md bg-[#00205B] px-4 py-2 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => removeProduct(category.id, product.id)}
+                                            className="text-red-500 hover:text-red-400"
+                                        >
+                                            <Trash2 className="h-4 w-4" />
+                                        </button>
                                     </div>
-                                    <input
-                                        type="text"
-                                        placeholder="00.00"
-                                        value={product.price}
-                                        onChange={(e) => updateProduct(category.id, product.id, 'price', e.target.value)}
-                                        className="w-full rounded-md bg-[#00205B] px-4 py-2 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => removeProduct(category.id, product.id)}
-                                        className="text-red-500 hover:text-red-400"
-                                    >
-                                        <Trash2 className="h-5 w-5" />
-                                    </button>
-                                </div>
-                            ))}
+                                ))}
+                            </div>
 
                             <button
                                 type="button"
                                 onClick={() => addProduct(category.id)}
-                                className="flex items-center text-[#0051FF] hover:text-[#0051FF]/90"
+                                className="flex items-center text-[#0051FF] hover:text-[#0051FF]/90 text-sm"
                             >
                                 <Plus className="mr-2 h-4 w-4" />
                                 Adicionar mais produtos
@@ -205,4 +213,3 @@ export default function NewBudgetPage() {
         </div>
     )
 }
-

@@ -24,7 +24,7 @@ export default function BudgetPage() {
     const router = useRouter()
 
     return (
-        <div className="min-h-screen bg-[#00205B] p-8">
+        <div className="min-h-screen bg-[#0a192f] p-8">
             <div className="mx-auto max-w-7xl">
                 <div className="mb-8 flex items-center justify-between">
                     <h1 className="text-2xl font-bold text-white">Orçamentos</h1>
@@ -40,10 +40,10 @@ export default function BudgetPage() {
                     <input
                         type="search"
                         placeholder="Pesquisar cliente"
-                        className="w-full rounded-md bg-[#001A4B] py-3 pl-10 pr-4 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
+                        className="w-full rounded-md bg-[#0a192f] py-3 pl-10 pr-4 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
                     />
                 </div>
-                <div className="rounded-md bg-[#001A4B]">
+                <div className="rounded-md bg-[#0a192f]">
                     <div className="grid grid-cols-4 gap-4 border-b border-gray-700 p-4 text-sm font-medium text-gray-400">
                         <div>Cliente</div>
                         <div>Nome</div>
@@ -89,7 +89,7 @@ export default function BudgetPage() {
                 </div>
                 <div className="mt-4 flex items-center justify-end gap-1 text-sm text-white">
                     <span>1 de XX</span>
-                    <button className="rounded-md p-1 hover:bg-[#001A4B]">
+                    <button className="rounded-md p-1 hover:bg-[#0a192f]">
                         <svg
                             className="h-5 w-5"
                             fill="none"
