@@ -40,7 +40,7 @@ export default function BudgetPage() {
                     <input
                         type="search"
                         placeholder="Pesquisar cliente"
-                        className="w-full rounded-md bg-[#0a192f] py-3 pl-10 pr-4 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
+                        className="w-full rounded-md bg-[#132236] py-3 pl-10 pr-4 text-sm text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF]"
                     />
                 </div>
                 <div className="rounded-md bg-[#0a192f]">
