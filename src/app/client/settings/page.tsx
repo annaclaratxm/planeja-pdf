@@ -3,6 +3,19 @@
 import { ArrowLeft } from 'lucide-react'
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+// import { Upload } from 'lucide-react'
+import { Button } from "@/components/ui/button"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
 
 export default function CompanySettings() {
   const router = useRouter()
@@ -27,6 +40,32 @@ export default function CompanySettings() {
     "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG",
     "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
   ]
+
+  const [image, setImage] = useState<File | null>(null)
+  const [preview, setPreview] = useState<string>("")
+  const [open, setOpen] = useState(false);
+
+  const handleCancel = () => {
+    setImage(null)
+    setPreview("")
+    setOpen(false)
+  }
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setImage(file)
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setPreview(reader.result as string)
+      }
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const handleUpload = () => {
+    console.log("Uploading image:", image)
+  }
 
   return (
     <div className="min-h-screen bg-[#0a192f] p-8">
@@ -167,19 +206,84 @@ export default function CompanySettings() {
           </div>
 
           <div className="flex justify-between">
-            <button
-              type="button"
-              className="rounded-md bg-[#0047AB] px-4 py-2 text-sm font-medium text-white hover:bg-[#0047AB]/90 border-none"
-            >
-              Inserir logo
-            </button>
-            <button
-              type="submit"
-              className="rounded-md bg-green-500 px-8 py-2 text-sm font-medium text-white hover:bg-green-600"
-            >
-              Salvar
-            </button>
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger>
+                <button
+                  type="button"
+                  className="rounded-md bg-[#0047AB] px-4 py-2 text-sm font-medium text-white hover:bg-[#0047AB]/90 border-none"
+                  onClick={() => setOpen(true)}
+                >
+                  Inserir logo
+                </button>
+              </DialogTrigger>
+
+
+              <button
+                type="submit"
+                className="rounded-md bg-green-500 px-8 py-2 text-sm font-medium text-white hover:bg-green-600"
+              >
+                Salvar
+              </button>
+
+
+              <DialogContent className="sm:max-w-md bg-[#0a192f] border-gray-800">
+                <DialogHeader>
+                  <DialogTitle className="text-white">Upload de Logo</DialogTitle>
+                  <DialogDescription className="text-gray-400">
+                    Selecione uma imagem para usar como logo da empresa
+                  </DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4">
+                  <div className="flex flex-col items-center justify-center gap-4">
+                    <div className="grid w-full items-center gap-1.5">
+                      <Label htmlFor="image" className="text-white">
+                        Imagem
+                      </Label>
+                      <div className="flex items-center gap-4">
+                        <Input
+                          id="image"
+                          type="file"
+                          accept="image/*"
+                          className="text-gray-400 bg-transparent border-gray-700"
+                          onChange={handleImageChange}
+                        />
+                      </div>
+                    </div>
+                    {preview && (
+                      <div className="relative w-40 h-40">
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={preview}
+                          alt="Preview"
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+                <DialogFooter className="sm:justify-between">
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="text-white bg-transparent border border-gray-700 hover:bg-gray-800"
+                    onClick={handleCancel}
+                  >
+                    Cancelar
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleUpload}
+                    className="bg-emerald-600 text-white hover:bg-emerald-700"
+                    disabled={!image}
+                  >
+                    Salvar
+                  </Button>
+                </DialogFooter>
+              </DialogContent>
+
+            </Dialog>
           </div>
+
         </form>
       </div>
     </div>
