@@ -4,20 +4,20 @@ import { Search } from 'lucide-react'
 import { useRouter } from "next/navigation"
 
 interface Budget {
-    client: string
+    customerId: string
     name: string
-    status: "Pendente" | "Aceito"
-    date: string
+    status: "Pendente" | "Aceito" | "Negado" | "Enviado"
+    shippingDate: string
 }
 
 const budgets: Budget[] = [
-    { client: "Daniel Costa", name: "Cozinha", status: "Pendente", date: "12/09/2024" },
-    { client: "Carla Mendes", name: "Sala", status: "Pendente", date: "11/09/2024" },
-    { client: "Daniel Costa", name: "Quarto", status: "Pendente", date: "11/09/2024" },
-    { client: "Elisa Pereira", name: "Banheiro", status: "Aceito", date: "10/09/2024" },
-    { client: "Carla Mendes", name: "Sala", status: "Pendente", date: "10/09/2024" },
-    { client: "Ana Souza", name: "Cozinha", status: "Pendente", date: "10/09/2024" },
-    { client: "Carla Mendes", name: "Quarto", status: "Aceito", date: "10/09/2024" },
+    { customerId: "Daniel Costa", name: "Cozinha", status: "Pendente", shippingDate: "12/09/2024" },
+    { customerId: "Carla Mendes", name: "Sala", status: "Pendente", shippingDate: "11/09/2024" },
+    { customerId: "Daniel Costa", name: "Quarto", status: "Pendente", shippingDate: "11/09/2024" },
+    { customerId: "Elisa Pereira", name: "Banheiro", status: "Aceito", shippingDate: "10/09/2024" },
+    { customerId: "Carla Mendes", name: "Sala", status: "Pendente", shippingDate: "10/09/2024" },
+    { customerId: "Ana Souza", name: "Cozinha", status: "Pendente", shippingDate: "10/09/2024" },
+    { customerId: "Carla Mendes", name: "Quarto", status: "Aceito", shippingDate: "10/09/2024" },
 ]
 
 export default function BudgetPage() {
@@ -55,7 +55,7 @@ export default function BudgetPage() {
                             key={index}
                             className="grid grid-cols-4 gap-4 border-b border-gray-700 p-4 text-sm text-white last:border-0"
                         >
-                            <div>{budget.client}</div>
+                            <div>{budget.customerId}</div>
                             <div>{budget.name}</div>
                             <div>
                                 <span
@@ -66,7 +66,7 @@ export default function BudgetPage() {
                                 </span>
                             </div>
                             <div className="flex items-center justify-between">
-                                <span>{budget.date}</span>
+                                <span>{budget.shippingDate}</span>
                                 <button className="text-gray-400 hover:text-white">
                                     <svg
                                         className="h-4 w-4"

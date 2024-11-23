@@ -50,6 +50,7 @@ model User {
   accounts  Account[]
   sessions  Session[]
   customers Customer[]
+  Budget    Budget[]
 }
 
 model VerificationToken {
@@ -68,5 +69,44 @@ model Customer {
   birthdate DateTime?
   userId    String
 
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  Budget Budget[]
+}
+
+model Budget {
+  id           String       @id @default(cuid())
+  name         String
+  status       StatusBudget
+  customerId   String
+  userId       String
+  shippingDate DateTime?
+  validateDate DateTime?
+  categories   Category[]
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
+  customer     Customer     @relation(fields: [customerId], references: [id], onDelete: Cascade)
+  user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model Category {
+  id       String    @id @default(cuid())
+  name     String
+  budgetId String
+  products Product[]
+  Budget   Budget    @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+}
+
+model Product {
+  id         String   @id @default(cuid())
+  name       String
+  price      Float
+  categoryId String
+  Category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+}
+
+enum StatusBudget {
+  Pendente
+  Enviado
+  Aceito
+  Negado
 }
