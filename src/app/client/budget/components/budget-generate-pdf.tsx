@@ -1,130 +1,102 @@
-'use client'
+'use client';
 
 import { generatePdf } from '@/services/api/pdf-generator/actions';
-import { format } from 'date-fns';
 import jsPDF from 'jspdf';
-import React from 'react';
 
-interface BudgetGeneratePdfProps {
-    budgetId: string;
-}
+export const BudgetGeneratePdf = async (budgetId: string) => {
+    try {
+        const budget = await generatePdf(budgetId);
 
-const BudgetGeneratePdf: React.FC<BudgetGeneratePdfProps> = ({ budgetId }) => {
-    const handleGeneratePdf = async () => {
-        try {
-            const budget = await generatePdf(budgetId);
+        if (!budget) {
+            throw new Error('Budget not found');
+        }
 
-            if (!budget) {
-                throw new Error('Budget not found');
-            }
+        if (!budget.customer) {
+            throw new Error('Customer not found');
+        }
 
-            if (!budget.customer) {
-                throw new Error('Customer not found');
-            }
+        const doc = new jsPDF();
+        const pageWidth = doc.internal.pageSize.width;
 
-            const doc = new jsPDF();
-            const pageWidth = doc.internal.pageSize.width;
+        const centerText = (text: string, y: number) => {
+            const textWidth = doc.getStringUnitWidth(text) * doc.internal.getFontSize() / doc.internal.scaleFactor;
+            const x = (pageWidth - textWidth) / 2;
+            doc.text(text, x, y);
+        };
 
-            // Helper function to center text
-            const centerText = (text: string, y: number) => {
-                const textWidth = doc.getStringUnitWidth(text) * doc.internal.getFontSize() / doc.internal.scaleFactor;
-                const x = (pageWidth - textWidth) / 2;
-                doc.text(text, x, y);
-            };
+        const addLine = (y: number) => {
+            doc.line(10, y, pageWidth - 10, y);
+        };
 
-            // Helper function to add a line
-            const addLine = (y: number) => {
-                doc.line(10, y, pageWidth - 10, y);
-            };
+        doc.setFontSize(16);
+        doc.setFont('heveltica', 'bold');
+        centerText(`ORÇAMENTO ${budget.name}/${new Date().getFullYear()}`, 20);
 
-            // Title
-            doc.setFontSize(16);
-            doc.setFont('helvetica', 'bold');
-            centerText(`ORÇAMENTO ${budget.name}/${new Date().getFullYear()}`, 20);
+        doc.setFontSize(12);
+        doc.setFont('heveltica', 'normal');
 
-            doc.setFontSize(12);
-            doc.setFont('helvetica', 'normal');
+        doc.text(`Cliente: ${budget.customer.name}`, 10, 30);
+        doc.text(`Fone: ${budget.customer.phone}`, 10, 35);
 
-            // Customer details
-            doc.text(`Cliente: ${budget.customer.name}`, 10, 30);
-            doc.text(`Fone: ${budget.customer.phone}`, 10, 35);
+        addLine(40);
 
-            addLine(40);
+        doc.setFont('heveltica', 'bold');
+        doc.text('ORÇAMENTO', 10, 50);
+        doc.setFont('heveltica', 'normal');
 
-            // Budget details
-            doc.setFont('helvetica', 'bold');
-            doc.text('ORÇAMENTO PRÉVIO', 10, 50);
-            doc.setFont('helvetica', 'normal');
+        let yPos = 60;
+        budget.categories.forEach((category) => {
+            doc.text(`• ${category.name}`, 10, yPos);
+            const totalPrice = category.products.reduce((sum, product) => sum + product.price, 0);
+            doc.text(`R$ ${totalPrice.toFixed(2)}`, pageWidth - 50, yPos);
+            yPos += 10;
 
-            let yPos = 60;
-            budget.categories.forEach((category) => {
-                doc.text(`• ${category.name}`, 10, yPos);
-                const totalPrice = category.products.reduce((sum, product) => sum + product.price, 0);
-                doc.text(`R$ ${totalPrice.toFixed(2)}`, pageWidth - 50, yPos);
+            category.products.forEach((product) => {
+                doc.text(`  - ${product.name}`, 15, yPos);
+                doc.text(`R$ ${product.price.toFixed(2)}`, pageWidth - 50, yPos);
                 yPos += 10;
             });
+        });
 
-            doc.setFont('helvetica', 'bold');
-            doc.text(`Total`, 10, yPos + 10);
-            doc.text(`R$ ${budget.total.toFixed(2)}`, pageWidth - 50, yPos + 10);
+        doc.setFont('heveltica', 'bold');
+        doc.text(`Total`, 10, yPos + 10);
+        doc.text(`R$ ${budget.total.toFixed(2)}`, pageWidth - 50, yPos + 10);
 
-            addLine(yPos + 15);
+        addLine(yPos + 15);
 
-            // Additional information
-            yPos += 25;
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.text('Este é um orçamento prévio com base nas imagens e fotografias enviadas pelo cliente. Podem', 10, yPos);
-            doc.text('sofrer alterações de valores após a conferência de medidas e especificações de materiais', 10, yPos + 5);
-            doc.text('divergentes às imagens enviadas.', 10, yPos + 10);
+        yPos += 25;
+        doc.setFontSize(10);
+        doc.setFont('heveltica', 'normal');
 
-            yPos += 20;
-            doc.text('Forma e condições de pagamento: 40% de entrada e restante em 4 x com cheque. A vista (1+1)', 10, yPos);
-            doc.text('com 5 % de desconto, ou tudo parcelado em até 18 x sem entrada no cartão de crédito com juros', 10, yPos + 5);
-            doc.text('simples de 1,1% ao mês.', 10, yPos + 10);
+        doc.text('Forma e condições de pagamento: 40% de entrada e restante em 4 x com cheque.', 15, yPos);
+        doc.text('A vista (1+1) com 5 % de desconto, ou tudo parcelado em até 18 x sem entrada', 15, yPos + 5);
+        doc.text('no cartão de crédito com juros simples de 1,1% ao mês', 15, yPos + 9);
 
-            yPos += 20;
-            doc.text('OBS: Móveis todos em MDF classificação E1, com garantia de 5 anos em toda a estrutura e', 10, yPos);
-            doc.text('acabamentos e 01 ano de garantia nas ferragens, luminárias, vidros e espelhos.', 10, yPos + 5);
+        yPos += 30;
 
-            yPos += 15;
-            doc.text('Não está incluso neste orçamento: pedras, estofados, serviços de encanador e eletricista.', 10, yPos);
+        const formatDate = (date: Date) => {
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            return `${day}/${month}/${year}`;
+        };
 
-            yPos += 15;
-            doc.text(`Prazo de entrega: até ${budget.shippingDate} dias`, 10, yPos);
-            doc.text(`Validade deste orçamento: ${budget.validateDate} dias`, pageWidth / 2, yPos);
+        const shippingDate = new Date(new Date().setDate(new Date().getDate() + 90));
+        doc.text(`Prazo de entrega: ${formatDate(shippingDate)}`, 10, yPos);
 
-            // Signature
-            yPos += 20;
-            doc.line(10, yPos, 100, yPos);
-            doc.text(budget.user.setting[0].companyName, 10, yPos + 5);
-            doc.text(`${budget.user.name} (Ger. Comercial)`, 10, yPos + 10);
-            doc.text(budget.user.setting[0].phone, 10, yPos + 15);
+        const validateDate = new Date(new Date().setDate(new Date().getDate() + 10));
+        doc.text(`Validade deste orçamento: ${formatDate(validateDate)}`, pageWidth / 2, yPos);
 
-            // Date
-            yPos += 30;
-            doc.text(`${budget.user.setting[0].city}, ${format(new Date(), 'dd \'de\' MMMM \'de\' yyyy')}`, 10, yPos);
-
-            // Footer
-            doc.setFontSize(8);
-            const footerText = `${budget.user.setting[0].street}`;
-            //${budget.user.setting[0].neighborhood}
-            centerText(footerText, 280);
-            centerText(`E-mail ${budget.user.email} fone ${budget.user.setting[0].phone}`, 285);
-            centerText(`CNPJ ${budget.user.setting[0].cnpj}`, 290);
-
-            doc.save(`orcamento_${budget.name}_${new Date().getFullYear()}.pdf`);
-        } catch (error) {
-            console.error('Error generating PDF:', error);
-        }
-    };
-
-    return (
-        <button onClick={handleGeneratePdf} className="bg-blue-500 text-white py-2 px-4 rounded">
-            Generate PDF
-        </button>
-    );
+        const pdfBlob = doc.output('blob');
+        const url = URL.createObjectURL(pdfBlob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `orcamento_${budget.name}_${new Date().getFullYear()}.pdf`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+    } catch (error) {
+        console.error('Error generating PDF:', error);
+    }
 };
-
-export default BudgetGeneratePdf;
-

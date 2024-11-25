@@ -1,11 +1,11 @@
 "use client"
 
 import { toast } from '@/hooks/use-toast'
-import { deleteBudgetById } from '@/services/api/budget/actions'
+import { deleteBudgetById, updateStatusBudget } from '@/services/api/budget/actions'
 import { Edit, Search, Trash2 } from 'lucide-react'
 import { useRouter } from "next/navigation"
 import { useState } from 'react'
-import BudgetGeneratePdf from './budget-generate-pdf'
+import { BudgetGeneratePdf } from './budget-generate-pdf'
 
 interface Budget {
     id: string
@@ -80,12 +80,21 @@ export default function BudgetDataTable({ budgets }: { budgets: Budget[] }) {
                             <div>{budget.customer?.name}</div>
                             <div>{budget.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
                             <div>
-                                <span
-                                    className={`inline-flex items-center ${budget.status === "Aceito" ? "text-green-400" : "text-[#0051FF]"
-                                        }`}
+                                <select
+                                    value={budget.status}
+                                    onChange={async (e) => {
+                                        const newStatus = e.target.value as Budget["status"];
+                                        await updateStatusBudget(newStatus, budget.id);
+                                        window.location.reload();
+                                    }}
+                                    className={`inline-flex items-center ${budget.status === "Aceito" ? "text-green-400" : budget.status === "Negado" ? "text-red-400" : budget.status === "Enviado" ? "text-yellow-300" : "text-[#0051FF]"
+                                        } bg-transparent border-none focus:outline-none`}
                                 >
-                                    {budget.status}
-                                </span>
+                                    <option value="Pendente" className="bg-[#132236] border-none text-white">Pendente</option>
+                                    <option value="Aceito" className="bg-[#132236] text-white">Aceito</option>
+                                    <option value="Negado" className="bg-[#132236] text-white">Negado</option>
+                                    <option value="Enviado" className="bg-[#132236] text-white">Enviado</option>
+                                </select>
                             </div>
                             <div className="flex items-center space-x-2">
                                 <button
@@ -129,7 +138,7 @@ export default function BudgetDataTable({ budgets }: { budgets: Budget[] }) {
                                 )}
                                 <button
                                     className="text-gray-400 hover:text-white"
-                                    onClick={() => BudgetGeneratePdf({ budgetId: budget.id })}
+                                    onClick={() => BudgetGeneratePdf(budget.id)}
                                     aria-label="Imprimir orçamento"
                                 >
                                     <svg
@@ -143,10 +152,11 @@ export default function BudgetDataTable({ budgets }: { budgets: Budget[] }) {
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
                                             strokeWidth={2}
-                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                                            d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zM14 3.5V9h5.5M8 18h8M8 14h8M8 10h4"
                                         />
                                     </svg>
                                 </button>
+
                             </div>
                         </div>
                     ))}

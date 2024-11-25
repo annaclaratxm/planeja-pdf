@@ -42,7 +42,7 @@ export async function upsertBudget(input: BudgetType) {
     if (!userId) {
         throw new Error("User not founded");
     }
-    console.log('input: ', input);
+
     if (input.id) {
         // atualizar orçamento existente
         const updatedBudget = await prisma.budget.update({
