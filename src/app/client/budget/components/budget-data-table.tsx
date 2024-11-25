@@ -1,7 +1,7 @@
 "use client"
 
 import { toast } from '@/hooks/use-toast'
-import { deleteBudgetById } from '@/services/api/budget/actions'
+import { deleteBudgetById, updateStatusBudget } from '@/services/api/budget/actions'
 import { Edit, Search, Trash2 } from 'lucide-react'
 import { useRouter } from "next/navigation"
 import { useState } from 'react'
@@ -80,12 +80,21 @@ export default function BudgetDataTable({ budgets }: { budgets: Budget[] }) {
                             <div>{budget.customer?.name}</div>
                             <div>{budget.total.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</div>
                             <div>
-                                <span
-                                    className={`inline-flex items-center ${budget.status === "Aceito" ? "text-green-400" : "text-[#0051FF]"
-                                        }`}
+                                <select
+                                    value={budget.status}
+                                    onChange={async (e) => {
+                                        const newStatus = e.target.value as Budget["status"];
+                                        await updateStatusBudget(newStatus, budget.id);
+                                        window.location.reload();
+                                    }}
+                                    className={`inline-flex items-center ${budget.status === "Aceito" ? "text-green-400" : budget.status === "Negado" ? "text-red-400" : budget.status === "Enviado" ? "text-yellow-300" : "text-[#0051FF]"
+                                        } bg-transparent border-none focus:outline-none`}
                                 >
-                                    {budget.status}
-                                </span>
+                                    <option value="Pendente" className="bg-[#132236] border-none text-white">Pendente</option>
+                                    <option value="Aceito" className="bg-[#132236] text-white">Aceito</option>
+                                    <option value="Negado" className="bg-[#132236] text-white">Negado</option>
+                                    <option value="Enviado" className="bg-[#132236] text-white">Enviado</option>
+                                </select>
                             </div>
                             <div className="flex items-center space-x-2">
                                 <button
