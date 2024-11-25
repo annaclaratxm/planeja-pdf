@@ -1,24 +1,16 @@
-import { z } from 'zod'
+import { z } from 'zod';
 
-export const upsertCustomerSchema = z.object({
+export const upsertSettingsSchema = z.object({
     id: z.string().optional(),
-    name: z.string().optional(),
-    phone: z.string().optional(),
-    email: z.string().optional().nullable(),
-    birthdate: z.date().optional().nullable(),
-    userId: z.string().optional()
-})
-
-export const deleteCustomerSchema = z.object({
-    id: z.string(),
-})
-
-/*
- id        String    @id @default(cuid())
-  name      String
-  phone     String
-  email     String?
-  birthdate DateTime?
-  userId    String
-
-*/
+    companyName: z.string(),
+    cnpj: z.string(),
+    street: z.string(),
+    number: z.number(),
+    zipCode: z.string(),
+    state: z.string(),
+    city: z.string(),
+    phone: z.string(),
+    responsiblePerson: z.string(),
+    createdAt: z.date().optional().nullable(),
+    updatedAt: z.date().optional().nullable()
+});

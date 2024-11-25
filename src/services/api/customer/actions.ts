@@ -27,6 +27,9 @@ export async function getUserCustomers() {
             email: true,
             birthdate: true,
             userId: true,
+            address: true,
+            cpf: true,
+            cnpj: true
         },
     });
 

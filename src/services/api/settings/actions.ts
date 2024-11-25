@@ -1,103 +1,21 @@
 'use server'
 
 import { authOptions } from '@/lib/auth'
-
 import { prisma } from '@/lib/prisma'
 import { getServerSession } from 'next-auth'
 import { z } from 'zod'
-import { deleteCustomerSchema, upsertCustomerSchema } from './schema'
+import { upsertSettingsSchema } from './schema'
 
-export async function getUserCustomers() {
-    const session = await getServerSession(authOptions)
-
-    if (!session) {
-        throw new Error("User is not logged");
-    }
-
-    const customers = await prisma.customer.findMany({
-        where: {
-            user: {
-                email: session.user.email
-            }
-        },
-        select: {
-            name: true,
-            id: true,
-            phone: true,
-            email: true,
-            birthdate: true,
-            userId: true,
-        },
-    });
-
-    return customers.map(customer => ({
-        ...customer,
-        birthdate: customer.birthdate ? customer.birthdate.toISOString() : null,
-    }));
-}
-
-export async function upsertCustomer(input: z.infer<typeof upsertCustomerSchema>) {
+export async function upsertSettings(input: z.infer<typeof upsertSettingsSchema>) {
     const session = await getServerSession(authOptions)
 
     if (!session?.user?.email) {
-        return {
-            error: 'Not authorized',
-            data: null,
-        }
-    }
-
-    if (input.id) {
-        const customer = await prisma.customer.findUnique({
-            where: {
-                id: input.id,
-                user: {
-                    email: session.user.email
-                }
-            },
-            select: {
-                id: true,
-            },
-        })
-
-        if (!customer) {
-            return {
-                error: 'Not found',
-                data: null,
-            }
-        }
-
-        const updatedCustomer = await prisma.customer.update({
-            where: {
-                id: input.id,
-                user: {
-                    email: session.user.email
-                }
-            },
-            data: {
-                birthdate: input.birthdate,
-                email: input.email,
-                name: input.name,
-                phone: input.phone,
-            },
-        })
-
-        return {
-            error: null,
-            data: updatedCustomer,
-        }
-    }
-
-    if (!input.name) {
-        return {
-            error: 'Name is required',
-            data: null,
-        }
+        throw new Error('Not authorized')
     }
 
     const user = await prisma.user.findUnique({
         where: {
             email: session.user.email
-
         },
         select: {
             id: true
@@ -105,62 +23,67 @@ export async function upsertCustomer(input: z.infer<typeof upsertCustomerSchema>
     })
 
     if (!user || !user.id) {
-        return {
-            error: 'User not founded',
-            data: null,
-        }
-
+        throw new Error('User not found')
     }
 
-    const customer = await prisma.customer.create({
-        data: {
-            name: input.name,
-            phone: input.phone ?? "",
-            email: input.email,
-            birthdate: input.birthdate,
+    const settings = await prisma.settings.upsert({
+        where: {
+            userId: user.id
+        },
+        update: {
+            companyName: input.companyName,
+            cnpj: input.cnpj,
+            street: input.street,
+            number: input.number,
+            zipCode: input.zipCode,
+            state: input.state,
+            city: input.city,
+            phone: input.phone,
+            responsiblePerson: input.responsiblePerson,
+        },
+        create: {
             userId: user.id,
+            companyName: input.companyName,
+            cnpj: input.cnpj,
+            street: input.street,
+            number: input.number,
+            zipCode: input.zipCode,
+            state: input.state,
+            city: input.city,
+            phone: input.phone,
+            responsiblePerson: input.responsiblePerson,
         },
     })
 
-    return customer
+    return settings;
 }
 
-export async function deleteCustomer(input: z.infer<typeof deleteCustomerSchema>) {
+export async function getSettings() {
     const session = await getServerSession(authOptions)
 
     if (!session?.user?.email) {
-        return {
-            error: 'Not authorized',
-            data: null,
-        }
+        throw new Error('Not authorized');
     }
 
-    const customer = await prisma.customer.findUnique({
+    const user = await prisma.user.findUnique({
         where: {
-            id: input.id,
-            userId: session?.user?.id,
+            email: session.user.email
         },
         select: {
-            id: true,
-        },
-    })
-
-    if (!customer) {
-        return {
-            error: 'Not found',
-            data: null,
+            id: true
         }
-    }
-
-    await prisma.customer.delete({
-        where: {
-            id: input.id,
-            userId: session?.user?.id,
-        },
     })
 
-    return {
-        error: null,
-        data: 'Customer deleted successfully',
+    if (!user || !user.id) {
+        throw new Error("User not found");
     }
+
+    const settings = await prisma.settings.findUnique({
+        where: {
+            userId: user.id
+        }
+    })
+
+    return settings;
 }
+

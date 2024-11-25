@@ -1,9 +1,5 @@
 'use client'
 
-import { ArrowLeft } from 'lucide-react'
-import { useRouter } from "next/navigation"
-import { useState } from "react"
-// import { Upload } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
@@ -16,6 +12,10 @@ import {
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
+import { getSettings, upsertSettings } from '@/services/api/settings/actions'
+import { ArrowLeft } from 'lucide-react'
+import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
 export default function CompanySettings() {
   const router = useRouter()
@@ -23,27 +23,46 @@ export default function CompanySettings() {
     companyName: '',
     cnpj: '',
     street: '',
-    number: '',
+    number: 0,
     zipCode: '',
     state: '',
     city: '',
     phone: '',
     responsiblePerson: '',
   })
+  const [image, setImage] = useState<File | null>(null)
+  const [preview, setPreview] = useState<string>("")
+  const [open, setOpen] = useState(false)
 
-  const handleSubmit = (e: React.FormEvent) => {
+  useEffect(() => {
+    const fetchSettings = async () => {
+      try {
+        const settings = await getSettings()
+        if (settings) {
+          setFormData(settings)
+        }
+      } catch (error) {
+        console.error('Failed to fetch settings:', error)
+      }
+    }
+
+    fetchSettings()
+  }, [])
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    console.log(formData)
+    try {
+      await upsertSettings(formData)
+      console.log('Settings saved successfully')
+    } catch (error) {
+      console.error('Failed to save settings:', error)
+    }
   }
 
   const brazilianStates = [
     "AC", "AL", "AP", "AM", "BA", "CE", "DF", "ES", "GO", "MA", "MT", "MS", "MG",
     "PA", "PB", "PR", "PE", "PI", "RJ", "RN", "RS", "RO", "RR", "SC", "SP", "SE", "TO"
   ]
-
-  const [image, setImage] = useState<File | null>(null)
-  const [preview, setPreview] = useState<string>("")
-  const [open, setOpen] = useState(false);
 
   const handleCancel = () => {
     setImage(null)
@@ -63,9 +82,49 @@ export default function CompanySettings() {
     }
   }
 
-  const handleUpload = () => {
-    console.log("Uploading image:", image)
+  const handleUpload = async () => {
+    console.log(image)
+    // Implement image upload logic here
   }
+
+  const formatCNPJ = (value: string) => {
+    return value.replace(/\D/g, '')
+      .replace(/^(\d{2})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1.$2')
+      .replace(/(\d{3})(\d)/, '$1/$2')
+      .replace(/(\d{4})(\d)/, '$1-$2')
+      .slice(0, 18)
+  }
+
+  const formatPhone = (value: string) => {
+    const numericValue = value.replace(/\D/g, '')
+    if (numericValue.startsWith('55')) {
+      return numericValue
+        .replace(/^(\d{2})(\d{2})(\d{5})(\d{4})$/, '+$1 ($2) $3-$4')
+        .slice(0, 19)
+    } else {
+      return numericValue
+        .replace(/^(\d{2})(\d)/, '+55 ($1) $2')
+        .replace(/(\d{5})(\d{1,4})/, '$1-$2')
+        .slice(0, 19)
+    }
+  }
+
+  const renderInput = (id: string, label: string, placeholder: string, value: string | number, onChange: (value: string) => void, type: string = "text") => (
+    <div>
+      <label htmlFor={id} className="mb-1 block text-xs text-white">
+        {label}
+      </label>
+      <input
+        type={type}
+        id={id}
+        placeholder={placeholder}
+        className="w-full h-[46px] rounded-md bg-[#132236] px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF] border-[#132236]"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </div>
+  )
 
   return (
     <div className="min-h-screen bg-[#0a192f] p-8">
@@ -82,33 +141,8 @@ export default function CompanySettings() {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div className="space-y-6">
-            <div>
-              <label htmlFor="companyName" className="mb-2 block text-sm text-white">
-                Nome da Empresa
-              </label>
-              <input
-                type="text"
-                id="companyName"
-                placeholder="Digite aqui"
-                className="w-full rounded-md bg-[#132236] px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF] border-[#132236]"
-                value={formData.companyName}
-                onChange={(e) => setFormData({ ...formData, companyName: e.target.value })}
-              />
-            </div>
-
-            <div>
-              <label htmlFor="cnpj" className="mb-2 block text-sm text-white">
-                CNPJ
-              </label>
-              <input
-                type="text"
-                id="cnpj"
-                placeholder="__.___.___/____-__"
-                className="w-full rounded-md bg-[#132236] px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF] border-[#132236]"
-                value={formData.cnpj}
-                onChange={(e) => setFormData({ ...formData, cnpj: e.target.value })}
-              />
-            </div>
+            {renderInput("companyName", "Nome da Empresa", "Digite aqui", formData.companyName, (value) => setFormData({ ...formData, companyName: value }))}
+            {renderInput("cnpj", "CNPJ", "__.___.___/____-__", formData.cnpj, (value) => setFormData({ ...formData, cnpj: formatCNPJ(value) }))}
 
             <div className="space-y-4">
               <label className="mb-2 block text-sm text-white">
@@ -116,43 +150,23 @@ export default function CompanySettings() {
               </label>
               <div className="flex flex-wrap gap-4">
                 <div className="flex-1 min-w-[240px]">
-                  <div className="text-xs text-white mb-1">Rua</div>
-                  <input
-                    type="text"
-                    placeholder="Digite aqui"
-                    className="w-full rounded-md bg-[#132236] px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF] border-[#132236]"
-                    value={formData.street}
-                    onChange={(e) => setFormData({ ...formData, street: e.target.value })}
-                  />
+                  {renderInput("street", "Rua", "Digite aqui", formData.street, (value) => setFormData({ ...formData, street: value }))}
                 </div>
                 <div className="w-32">
-                  <div className="text-xs text-white mb-1">Número</div>
-                  <input
-                    type="text"
-                    placeholder="_ _ _ _"
-                    className="w-full rounded-md bg-[#132236] px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF] border-[#132236]"
-                    value={formData.number}
-                    onChange={(e) => setFormData({ ...formData, number: e.target.value })}
-                  />
+                  {renderInput("number", "Número", "_ _ _ _", formData.number, (value) => setFormData({ ...formData, number: Number(value) }), "number")}
                 </div>
                 <div className="w-40">
-                  <div className="text-xs text-white mb-1">CEP</div>
-                  <input
-                    type="text"
-                    placeholder="_____-___"
-                    className="w-full rounded-md bg-[#132236] px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF] border-[#132236]"
-                    value={formData.zipCode}
-                    onChange={(e) => setFormData({ ...formData, zipCode: e.target.value })}
-                  />
+                  {renderInput("zipCode", "CEP", "_____-___", formData.zipCode, (value) => setFormData({ ...formData, zipCode: value }))}
                 </div>
               </div>
-              <div className="flex flex-wrap gap-4">
-                <div className="w-32">
-                  <div className="text-xs text-white mb-1">UF</div>
+              <div className="grid grid-cols-[120px_1fr] gap-4">
+                <div>
+                  <label htmlFor="state" className="block text-xs text-white mb-1">UF</label>
                   <select
+                    id="state"
                     value={formData.state}
                     onChange={(e) => setFormData({ ...formData, state: e.target.value })}
-                    className="w-full rounded-md bg-[#132236] px-4 py-3 text-white focus:outline-none focus:ring-2 focus:ring-[#0051FF] border-[#132236]"
+                    className="w-full h-[46px] rounded-md bg-[#132236] px-4 text-white focus:outline-none focus:ring-2 focus:ring-[#0051FF] border-[#132236]"
                   >
                     <option value="">Selecione</option>
                     {brazilianStates.map((state) => (
@@ -162,12 +176,13 @@ export default function CompanySettings() {
                     ))}
                   </select>
                 </div>
-                <div className="flex-1 min-w-[240px]">
-                  <div className="text-xs text-white mb-1">Cidade</div>
+                <div>
+                  <label htmlFor="city" className="block text-xs text-white mb-1">Cidade</label>
                   <input
+                    id="city"
                     type="text"
                     placeholder="Digite aqui"
-                    className="w-full rounded-md bg-[#132236] px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF] border-[#132236]"
+                    className="w-full h-[46px] rounded-md bg-[#132236] px-4 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF] border-[#132236]"
                     value={formData.city}
                     onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                   />
@@ -176,55 +191,21 @@ export default function CompanySettings() {
             </div>
 
             <div className="grid gap-4 md:grid-cols-2">
-              <div>
-                <label htmlFor="phone" className="mb-2 block text-sm text-white">
-                  Telefone
-                </label>
-                <input
-                  type="text"
-                  id="phone"
-                  placeholder="+55 (   ) _____-____"
-                  className="w-full rounded-md bg-[#132236] px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF] border-[#132236]"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                />
-              </div>
-              <div>
-                <label htmlFor="responsiblePerson" className="mb-2 block text-sm text-white">
-                  Vendedor
-                </label>
-                <input
-                  type="text"
-                  id="responsiblePerson"
-                  placeholder="Digite aqui"
-                  className="w-full rounded-md bg-[#132236] px-4 py-3 text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-[#0051FF] border-[#132236]"
-                  value={formData.responsiblePerson}
-                  onChange={(e) => setFormData({ ...formData, responsiblePerson: e.target.value })}
-                />
-              </div>
+              {renderInput("phone", "Telefone", "+55 (   ) _____-____", formData.phone, (value) => setFormData({ ...formData, phone: formatPhone(value) }))}
+              {renderInput("responsiblePerson", "Vendedor", "Digite aqui", formData.responsiblePerson, (value) => setFormData({ ...formData, responsiblePerson: value }))}
             </div>
           </div>
 
           <div className="flex justify-between">
             <Dialog open={open} onOpenChange={setOpen}>
-              <DialogTrigger>
-                <button
+              <DialogTrigger asChild>
+                <Button
                   type="button"
                   className="rounded-md bg-[#0047AB] px-4 py-2 text-sm font-medium text-white hover:bg-[#0047AB]/90 border-none"
-                  onClick={() => setOpen(true)}
                 >
                   Inserir logo
-                </button>
+                </Button>
               </DialogTrigger>
-
-
-              <button
-                type="submit"
-                className="rounded-md bg-green-500 px-8 py-2 text-sm font-medium text-white hover:bg-green-600"
-              >
-                Salvar
-              </button>
-
 
               <DialogContent className="sm:max-w-md bg-[#0a192f] border-gray-800">
                 <DialogHeader>
@@ -280,13 +261,17 @@ export default function CompanySettings() {
                   </Button>
                 </DialogFooter>
               </DialogContent>
-
             </Dialog>
-          </div>
 
+            <Button
+              type="submit"
+              className="rounded-md bg-green-500 px-8 py-2 text-sm font-medium text-white hover:bg-green-600"
+            >
+              Salvar
+            </Button>
+          </div>
         </form>
       </div>
     </div>
   )
 }
-
