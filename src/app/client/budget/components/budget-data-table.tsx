@@ -5,7 +5,7 @@ import { deleteBudgetById, updateStatusBudget } from '@/services/api/budget/acti
 import { Edit, Search, Trash2 } from 'lucide-react'
 import { useRouter } from "next/navigation"
 import { useState } from 'react'
-import BudgetGeneratePdf from './budget-generate-pdf'
+import { BudgetGeneratePdf } from './budget-generate-pdf'
 
 interface Budget {
     id: string
@@ -138,7 +138,7 @@ export default function BudgetDataTable({ budgets }: { budgets: Budget[] }) {
                                 )}
                                 <button
                                     className="text-gray-400 hover:text-white"
-                                    onClick={() => BudgetGeneratePdf({ budgetId: budget.id })}
+                                    onClick={() => BudgetGeneratePdf(budget.id)}
                                     aria-label="Imprimir orçamento"
                                 >
                                     <svg
@@ -152,10 +152,11 @@ export default function BudgetDataTable({ budgets }: { budgets: Budget[] }) {
                                             strokeLinecap="round"
                                             strokeLinejoin="round"
                                             strokeWidth={2}
-                                            d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"
+                                            d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8l-6-6zM14 3.5V9h5.5M8 18h8M8 14h8M8 10h4"
                                         />
                                     </svg>
                                 </button>
+
                             </div>
                         </div>
                     ))}

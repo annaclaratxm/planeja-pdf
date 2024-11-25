@@ -53,7 +53,6 @@ export default function CompanySettings() {
     e.preventDefault()
     try {
       await upsertSettings(formData)
-      console.log('Settings saved successfully')
     } catch (error) {
       console.error('Failed to save settings:', error)
     }
