@@ -42,7 +42,7 @@ export default function LandingPage() {
         </section>
 
         <section className="text-center mb-16">
-          <h2 className="text-3xl font-bold mb-6">Por que escolher PlanejaPdf?</h2>
+          <h2 className="text-3xl font-bold mb-6">Por que escolher PlanejaPDF?</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div>
               <h3 className="text-xl font-semibold mb-2">Eficiência</h3>
@@ -73,7 +73,7 @@ export default function LandingPage() {
 
       <footer className="bg-[#0d1b2a] py-8 mt-16">
         <div className="container mx-auto px-4 text-center text-gray-400">
-          <p>&copy; 2024 PlanejaPdf. Todos os direitos reservados.</p>
+          <p>&copy; 2024 PlanejaPDF. Todos os direitos reservados.</p>
         </div>
       </footer>
     </div>

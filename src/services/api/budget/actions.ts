@@ -5,22 +5,27 @@ import { prisma } from '@/lib/prisma';
 import { StatusBudget } from '@prisma/client';
 import { getServerSession } from 'next-auth';
 
-interface UpsertBudgetInput {
+export interface ProductType {
     id?: string;
     name: string;
-    customerId: string;
-    categories: {
-        id?: string;
-        name: string;
-        products: {
-            id?: string;
-            name: string;
-            price: number
-        }[];
-    }[];
+    price: number;
 }
 
-export async function upsertBudget(input: UpsertBudgetInput) {
+export interface CategoryType {
+    id?: string;
+    name: string;
+    products: ProductType[];
+}
+
+export interface BudgetType {
+    id?: string;
+    name: string;
+    total: number;
+    customerId: string | null | undefined;
+    categories: CategoryType[];
+}
+
+export async function upsertBudget(input: BudgetType) {
     const session = await getServerSession(authOptions)
 
     if (!session || !session.user || !session.user.email) {
@@ -37,7 +42,7 @@ export async function upsertBudget(input: UpsertBudgetInput) {
     if (!userId) {
         throw new Error("User not founded");
     }
-
+    console.log('input: ', input);
     if (input.id) {
         // atualizar orçamento existente
         const updatedBudget = await prisma.budget.update({
@@ -45,6 +50,7 @@ export async function upsertBudget(input: UpsertBudgetInput) {
             data: {
                 name: input.name,
                 customerId: input.customerId,
+                total: input.total,
                 categories: {
                     deleteMany: {}, // apaga todas as categorias existentes antes de recriar
                     create: input.categories.map((category) => ({
@@ -65,8 +71,9 @@ export async function upsertBudget(input: UpsertBudgetInput) {
         const newBudget = await prisma.budget.create({
             data: {
                 name: input.name,
-                customerId: input.customerId,
+                customerId: input.customerId ?? undefined,
                 userId: userId,
+                total: input.total,
                 status: 'Pendente',
                 categories: {
                     create: input.categories.map((category) => ({
@@ -129,14 +136,29 @@ export async function getBudgets() {
                 email: session.user.email
             }
         },
+        include: {
+            customer: true
+        }
     });
+
     return budgets;
 }
 
+
+
 export async function getBudgetById(budgetId: string) {
+    const session = await getServerSession(authOptions)
+
+    if (!session) {
+        throw new Error("User is not logged");
+    }
+
     return prisma.budget.findFirst({
         where: {
-            id: budgetId
+            id: budgetId,
+            user: {
+                email: session.user.email
+            }
         },
         include: {
             categories: {
@@ -146,4 +168,33 @@ export async function getBudgetById(budgetId: string) {
             }
         }
     })
+}
+
+export async function deleteBudgetById(budgetId: string) {
+    const session = await getServerSession(authOptions);
+
+    if (!session) {
+        throw new Error("User is not logged");
+    }
+
+    const budget = await prisma.budget.findFirst({
+        where: {
+            id: budgetId,
+            user: {
+                email: session.user.email
+            }
+        }
+    });
+
+    if (!budget) {
+        throw new Error("Budget not found or you do not have permission to delete it");
+    }
+
+    await prisma.budget.delete({
+        where: {
+            id: budgetId
+        }
+    });
+
+    return { message: "Budget deleted successfully" };
 }

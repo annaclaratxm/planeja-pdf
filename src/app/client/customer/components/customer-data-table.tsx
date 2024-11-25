@@ -17,9 +17,28 @@ import { deleteCustomer } from "@/services/api/customer/actions";
 import { Customer } from "@/services/api/customer/types";
 import { DotsHorizontalIcon } from "@radix-ui/react-icons";
 import { ColumnDef, getCoreRowModel, useReactTable } from "@tanstack/react-table";
-import { Plus, Search } from "lucide-react";
+import { Plus, Search } from 'lucide-react';
 import React from "react";
 import { CustomerModal } from "./customer-modal";
+
+function formatPhoneNumber(phone: string): string {
+  // Remove todos os caracteres não numéricos
+  const digits = phone.replace(/\D/g, '');
+
+  // Verifica se é um número de telefone brasileiro válido (com ou sem DDD)
+  if (digits.length >= 10 && digits.length <= 11) {
+    const ddd = digits.slice(0, 2);
+    const part1 = digits.slice(2, -4);
+    const part2 = digits.slice(-4);
+    return `+55 (${ddd}) ${part1}-${part2}`;
+  }
+
+  // Se não for um número válido, retorna o formato original
+  return phone;
+}
+
+// import { formatPhoneNumber } from "@/utils/formatPhoneNumber"; //This import is now redundant, but kept for clarity in case the function is moved later.
+
 
 interface CustomerDataTableProps {
   data: Customer[];
@@ -39,7 +58,7 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
     {
       accessorKey: "phone",
       header: "Telefone",
-      cell: ({ row }) => <span>{row.getValue("phone")}</span>,
+      cell: ({ row }) => <span>{formatPhoneNumber(row.getValue("phone"))}</span>,
     },
     {
       accessorKey: "email",
@@ -52,6 +71,20 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
       cell: ({ row }) => {
         const birthdate = row.getValue("birthdate");
         return <span>{birthdate ? new Date(birthdate as Date).toLocaleDateString() : "N/A"}</span>;
+      },
+    },
+    {
+      accessorKey: "cnpjCpf",
+      header: "CNPJ/CPF",
+      cell: ({ row }) => {
+        const customer = row.original;
+        if (customer.cnpj) {
+          return <span>{customer.cnpj}</span>;
+        } else if (customer.cpf) {
+          return <span>{customer.cpf}</span>;
+        } else {
+          return <span>Não informado</span>;
+        }
       },
     },
     {
@@ -92,7 +125,7 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
 
   const handleDeleteCustomer = async (id: string) => {
     await deleteCustomer({ id });
-    
+
     window.location.reload();
 
     toast({
@@ -172,3 +205,4 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
     </div>
   );
 }
+
