@@ -18,7 +18,7 @@ export default function LandingPage() {
           <h1 className="text-4xl md:text-6xl font-bold mb-6">Simplifique seus Orçamentos com PlanejaPdf</h1>
           <p className="text-xl md:text-2xl mb-8 text-gray-300">Cadastre clientes, configure orçamentos e emita PDFs profissionais em minutos.</p>
           <Link
-            href="/signup"
+            href="/auth"
             className="inline-flex items-center bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-lg text-lg transition-colors"
           >
             Comece Agora

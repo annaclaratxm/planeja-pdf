@@ -189,15 +189,15 @@ export function CustomerModal({
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="bg-[#0a192f] border-0 text-white p-0 max-w-[450px] max-h-[90vh] overflow-hidden rounded-lg">
-                <DialogHeader className="p-6 pb-2">
+            <DialogContent className="bg-[#0a192f] border-0 text-white sm:max-w-[425px]">
+                <DialogHeader>
                     <DialogTitle className="text-2xl font-bold">
                         Cadastro de cliente
                     </DialogTitle>
                 </DialogHeader>
-                <ScrollArea className="h-[calc(90vh-180px)] px-6">
+                <ScrollArea className="max-h-[60vh] pr-4">
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 pb-6">
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                             <FormField
                                 control={form.control}
                                 name="name"
@@ -208,7 +208,7 @@ export function CustomerModal({
                                             <Input
                                                 placeholder="Nome completo"
                                                 {...field}
-                                                className="bg-[#132236] border-0 text-white placeholder:text-gray-400 h-11 rounded-md focus:ring-1 focus:ring-gray-400 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:ring-offset-0 w-full"
+                                                className="bg-[#132236] border-0 text-white placeholder:text-gray-400 focus:ring-1 focus:ring-gray-400 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:ring-offset-0"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -228,7 +228,7 @@ export function CustomerModal({
                                                 onChange={(e) => {
                                                     onChange(formatPhone(e.target.value));
                                                 }}
-                                                className="bg-[#132236] border-0 text-white placeholder:text-gray-400 h-11 rounded-md focus:ring-1 focus:ring-gray-400 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:ring-offset-0 w-full"
+                                                className="bg-[#132236] border-0 text-white placeholder:text-gray-400 focus:ring-1 focus:ring-gray-400 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:ring-offset-0"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -245,7 +245,7 @@ export function CustomerModal({
                                             <Input
                                                 placeholder="exemplo@exemplo.com"
                                                 {...field}
-                                                className="bg-[#132236] border-0 text-white placeholder:text-gray-400 h-11 rounded-md focus:ring-1 focus:ring-gray-400 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:ring-offset-0 w-full"
+                                                className="bg-[#132236] border-0 text-white placeholder:text-gray-400 focus:ring-1 focus:ring-gray-400 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:ring-offset-0"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -262,7 +262,7 @@ export function CustomerModal({
                                             <Input
                                                 type="date"
                                                 {...field}
-                                                className="bg-[#132236] border-0 text-white placeholder:text-gray-400 h-11 rounded-md focus:ring-1 focus:ring-gray-400 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:ring-offset-0 w-full"
+                                                className="bg-[#132236] border-0 text-white placeholder:text-gray-400 focus:ring-1 focus:ring-gray-400 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:ring-offset-0"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -306,7 +306,7 @@ export function CustomerModal({
                                                         : formatCPF(e.target.value);
                                                     onChange(formatted);
                                                 }}
-                                                className="bg-[#132236] border-0 text-white placeholder:text-gray-400 h-11 rounded-md focus:ring-1 focus:ring-gray-400 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:ring-offset-0 w-full"
+                                                className="bg-[#132236] border-0 text-white placeholder:text-gray-400 focus:ring-1 focus:ring-gray-400 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:ring-offset-0"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -323,7 +323,7 @@ export function CustomerModal({
                                             <Input
                                                 placeholder="Rua, número, bairro, cidade, estado"
                                                 {...field}
-                                                className="bg-[#132236] border-0 text-white placeholder:text-gray-400 h-11 rounded-md focus:ring-1 focus:ring-gray-400 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:ring-offset-0 w-full"
+                                                className="bg-[#132236] border-0 text-white placeholder:text-gray-400 focus:ring-1 focus:ring-gray-400 focus-visible:ring-1 focus-visible:ring-gray-400 focus-visible:ring-offset-0"
                                             />
                                         </FormControl>
                                         <FormMessage />
@@ -333,11 +333,11 @@ export function CustomerModal({
                         </form>
                     </Form>
                 </ScrollArea>
-                <div className="p-6 bg-[#0a192f] border-t border-gray-800">
+                <div className="flex justify-end">
                     <Button
                         type="submit"
                         onClick={form.handleSubmit(onSubmit)}
-                        className="bg-green-500 hover:bg-green-600 text-white rounded-md font-medium"
+                        className="bg-green-500 hover:bg-green-600 text-white"
                     >
                         Salvar
                     </Button>
@@ -346,4 +346,3 @@ export function CustomerModal({
         </Dialog>
     );
 }
-
