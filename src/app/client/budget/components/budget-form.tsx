@@ -1,8 +1,9 @@
 'use client'
 
 import { Button } from "@/components/ui/button"
-import { Card } from "@/components/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { BudgetType, upsertBudget } from '@/services/api/budget/actions'
 import { Customer } from "@/services/api/customer/types"
 import { Plus, Trash2 } from 'lucide-react'
@@ -91,42 +92,46 @@ export default function BudgetForm({ initialData, dataCustomer }: { initialData?
     }, [budget.categories, calculateTotalBudget]);
 
     return (
-        <Card className="p-6 bg-[#0a192f] text-white">
-            <h1 className="text-2xl font-bold mb-6">
-                {initialData ? 'Editar orçamento' : 'Novo orçamento'}
-            </h1>
-
-            <div className="space-y-6">
-                <div>
-                    <label className="block mb-2">Nomeie este orçamento</label>
+        <Card className="bg-[#0a192f] text-white border-none">
+            <CardHeader>
+                <CardTitle className="text-2xl">
+                    {initialData ? 'Editar orçamento' : 'Novo orçamento'}
+                </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+                <div className="space-y-2">
+                    <label className="text-sm font-medium">Nomeie este orçamento</label>
                     <Input
                         value={budget.name}
                         onChange={e => setBudget(prev => ({ ...prev, name: e.target.value }))}
-                        className="bg-[#132236] text-white"
+                        className="bg-[#132236] border-[#003380] text-white"
                         placeholder="Digite aqui"
                     />
                 </div>
 
-                <div>
-                    <label className="block mb-2">Cliente</label>
-                    <select
+                <div className="space-y-2">
+                    <label className="text-sm font-medium">Cliente</label>
+                    <Select
                         value={budget.customerId || ''}
-                        onChange={e => setBudget(prev => ({ ...prev, customerId: e.target.value }))}
-                        className="bg-[#132236] text-white w-full p-2 rounded"
+                        onValueChange={(value) => setBudget(prev => ({ ...prev, customerId: value }))}
                     >
-                        <option value="" disabled>Selecione um cliente</option>
-                        {dataCustomer.map(customer => (
-                            <option key={customer.id} value={customer.id}>
-                                {customer.name}
-                            </option>
-                        ))}
-                    </select>
+                        <SelectTrigger className="bg-[#132236] border-[#003380] text-white">
+                            <SelectValue placeholder="Selecione um cliente" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {dataCustomer.map(customer => (
+                                <SelectItem key={customer.id} value={customer.id}>
+                                    {customer.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>
 
                 {budget.categories.map((category, categoryIndex) => (
                     <div key={categoryIndex} className="space-y-4">
-                        <div>
-                            <label className="block mb-2">Categoria</label>
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium">Categoria</label>
                             <Input
                                 value={category.name}
                                 onChange={e => setBudget(prev => ({
@@ -142,7 +147,7 @@ export default function BudgetForm({ initialData, dataCustomer }: { initialData?
 
                         <div className="space-y-4">
                             {category.products.map((product, productIndex) => (
-                                <div key={productIndex} className="flex gap-4">
+                                <div key={productIndex} className="flex flex-col md:flex-row gap-4">
                                     <Input
                                         value={product.name}
                                         onChange={e => setBudget(prev => ({
@@ -156,7 +161,7 @@ export default function BudgetForm({ initialData, dataCustomer }: { initialData?
                                                 } : c
                                             )
                                         }))}
-                                        className="bg-[#132236] text-white flex-1"
+                                        className="bg-[#132236] border-[#003380] text-white flex-1"
                                         placeholder="Nome do produto"
                                     />
                                     <Input
@@ -180,7 +185,7 @@ export default function BudgetForm({ initialData, dataCustomer }: { initialData?
                                                 )
                                             }))
                                         }}
-                                        className="bg-[#132236] text-white w-32"
+                                        className="bg-[#132236] border-[#003380] text-white w-full md:w-32"
                                         placeholder="R$ 0,00"
                                     />
                                     <Button
@@ -207,14 +212,14 @@ export default function BudgetForm({ initialData, dataCustomer }: { initialData?
                 ))}
 
                 <Button
-                    variant="ghost"
+                    variant="secondary"
                     onClick={addCategory}
                     className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                 >
                     Adicionar mais categorias
                 </Button>
 
-                <div className="flex justify-between items-center bg-gray-800 text-white p-4 rounded-lg mt-4 shadow-lg">
+                <div className="flex flex-col md:flex-row justify-between items-center bg-gray-800 text-white p-4 rounded-lg mt-4 shadow-lg">
                     <span className="text-xl font-semibold">Total do orçamento:</span>
                     <span className="text-2xl font-bold text-green-400">
                         {new Intl.NumberFormat('pt-BR', {
@@ -226,11 +231,11 @@ export default function BudgetForm({ initialData, dataCustomer }: { initialData?
 
                 <Button
                     onClick={handleSubmit}
-                    className="w-full bg-green-600 hover:bg-green-600 text-white"
+                    className="w-full bg-green-600 hover:bg-green-700 text-white"
                 >
                     Salvar
                 </Button>
-            </div>
+            </CardContent>
         </Card>
     )
 }
