@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+    images: {
+        domains: [
+            process.env.CLOUDFLARE_R2_ENDPOINT_PUBLIC?.replace(/^https?:\/\//, '').replace('/planeja-pdf', '') || ''
+        ],
+    },
 };
 
 export default nextConfig;

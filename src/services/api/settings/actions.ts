@@ -40,6 +40,7 @@ export async function upsertSettings(input: z.infer<typeof upsertSettingsSchema>
             city: input.city,
             phone: input.phone,
             responsiblePerson: input.responsiblePerson,
+            logo: input.logo
         },
         create: {
             userId: user.id,
@@ -52,6 +53,7 @@ export async function upsertSettings(input: z.infer<typeof upsertSettingsSchema>
             city: input.city,
             phone: input.phone,
             responsiblePerson: input.responsiblePerson,
+            logo: input.logo
         },
     })
 
