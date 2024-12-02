@@ -1,3 +1,4 @@
+// src/app/layout.tsx
 import type { Metadata } from "next";
 
 import { Toaster } from "@/components/ui/toaster";
@@ -17,8 +18,27 @@ const geistMono = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "PlanejaPDF",
-  description: "Planeje seus PDFs com facilidade",
+  title: "PlanejaPDF - Orçamentos Profissionais e Eficientes em PDF",
+  description: "Crie orçamentos e PDFs profissionais em minutos com PlanejaPDF. Economize tempo, simplifique seu fluxo de trabalho e aumente sua produtividade com uma solução ágil e prática, ideal para empresas e freelancers.",
+  keywords: "orçamentos, PDFs profissionais, criação de orçamentos, produtividade, automação de orçamentos, freelancers, empresas, PlanejaPDF",
+  robots: "index, follow",
+  viewport: "width=device-width, initial-scale=1, maximum-scale=1",
+  themeColor: "#1a73e8",
+  openGraph: {
+    title: "PlanejaPDF - Orçamentos Profissionais e Eficientes em PDF",
+    description: "Crie orçamentos e PDFs profissionais em minutos. Aumente sua produtividade e simplifique seu fluxo de trabalho com PlanejaPDF, a solução ideal para empresas e freelancers.",
+    url: "https://planeja-pdf.vercel.app",
+    siteName: "PlanejaPDF",
+    locale: "pt_BR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "PlanejaPDF - Orçamentos Profissionais e Eficientes em PDF",
+    description: "Crie orçamentos e PDFs profissionais em minutos. Aumente sua produtividade com PlanejaPDF, a solução ideal para freelancers e empresas.",
+    site: "@PlanejaPDF",
+    creator: "@PlanejaPDF",
+  }
 };
 
 export default function RootLayout({
