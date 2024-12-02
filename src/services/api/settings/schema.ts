@@ -11,6 +11,7 @@ export const upsertSettingsSchema = z.object({
     city: z.string(),
     phone: z.string(),
     responsiblePerson: z.string(),
+    logo: z.string().optional().nullable(),
     createdAt: z.date().optional().nullable(),
     updatedAt: z.date().optional().nullable()
 });

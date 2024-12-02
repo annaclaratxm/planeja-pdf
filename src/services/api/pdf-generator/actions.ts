@@ -56,6 +56,7 @@ export async function generatePdf(budgetId: string) {
                             phone: true,
                             zipCode: true,
                             state: true,
+                            logo: true,
                         }
                     }
                 }
