@@ -85,10 +85,22 @@ const styles = StyleSheet.create({
         color: '#1a3a5a',
     },
     footer: {
-        marginTop: 30,
-        fontSize: 8,
-        color: '#6c757d',
+        marginTop: 20,
+        padding: 10,
+        borderTop: '2px solid #dee2e6',
+        backgroundColor: '#f8f9fa',
+    },
+    footerText: {
+        fontSize: 12,
+        color: '#000000',
         textAlign: 'center',
+        marginBottom: 5,
+    },
+    footerAddress: {
+        fontSize: 12,
+        color: '#000000',
+        textAlign: 'center',
+        marginTop: 10,
     },
 });
 
@@ -191,10 +203,39 @@ export const BudgetGeneratePdf = async (budgetId: string) => {
                             <Text style={styles.columnRight}>{formatDate(budget.user.setting[0].budgetValidityDays)}</Text>
                         </View>}
                     </View>
+                    <View style={styles.footer}>
+                        <Text style={styles.footerText}>
+                            {budget.user.setting[0].companyName}
+                        </Text>
+                        <Text style={styles.footerText}>
+                            {budget.user.setting[0].responsiblePerson}
+                        </Text>
+                        <Text style={styles.footerText}>
+                            {budget.user.setting[0].phone}
+                        </Text>
+                        <Text style={styles.footerText}>
+                            {budget.user.setting[0].city}, {new Date().toLocaleDateString('pt-BR')}
+                        </Text>
 
-                    <Text style={styles.footer}>
-                        Este documento é uma simulação de orçamento e não possui valor fiscal.
-                    </Text>
+                        <View style={styles.footerAddress}>
+                            <Text style={styles.footerText}>
+                                {budget.user.setting[0].street}, {budget.user.setting[0].number}, {budget.user.setting[0].neighborhood} - {budget.user.setting[0].city} - {budget.user.setting[0].state} / {budget.user.setting[0].zipCode}
+                            </Text>
+                            <View />
+                            <View>
+                                <Text style={styles.footerText}>
+                                    Telefone: {budget.user.setting[0].phone}
+                                </Text>
+                                <View />
+                                <View>
+                                    <Text style={styles.footerText}>
+                                        CNPJ: {budget.user.setting[0].cnpj}
+                                    </Text>
+                                </View>
+
+                            </View>
+                        </View>
+                    </View>
                 </Page>
             </Document>
         );
@@ -203,7 +244,7 @@ export const BudgetGeneratePdf = async (budgetId: string) => {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `orcamento_${budget.name}_${new Date().getFullYear()}.pdf`;
+        a.download = `${budget.customer.name}-${budget.name}-${new Date().getFullYear()}.pdf`;
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
