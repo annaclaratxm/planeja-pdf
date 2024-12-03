@@ -28,9 +28,9 @@ export default function AddressForm({ formData, setFormData }: AddressFormProps)
 
     return (
         <div className="space-y-4">
-            <Label className="text-white">Endereço</Label>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <div className="col-span-1 md:col-span-2 lg:col-span-1">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                    <Label className="text-white">Endereço</Label>
                     <Input
                         id="street"
                         placeholder="Rua"
@@ -40,6 +40,7 @@ export default function AddressForm({ formData, setFormData }: AddressFormProps)
                     />
                 </div>
                 <div>
+                    <Label htmlFor="number" className="text-white">Número</Label>
                     <Input
                         id="number"
                         type="text"
@@ -52,6 +53,7 @@ export default function AddressForm({ formData, setFormData }: AddressFormProps)
                     />
                 </div>
                 <div>
+                    <Label htmlFor="zipcode" className="text-white">CEP</Label>
                     <Input
                         id="zipCode"
                         placeholder="CEP"
@@ -61,7 +63,7 @@ export default function AddressForm({ formData, setFormData }: AddressFormProps)
                     />
                 </div>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-end">
                 <div>
                     <Label htmlFor="state" className="text-white">UF</Label>
                     <Select
@@ -81,6 +83,8 @@ export default function AddressForm({ formData, setFormData }: AddressFormProps)
                     </Select>
                 </div>
                 <div>
+                    <Label htmlFor="city" className="text-white">Cidade</Label>
+
                     <Input
                         id="city"
                         placeholder="Cidade"
@@ -93,4 +97,3 @@ export default function AddressForm({ formData, setFormData }: AddressFormProps)
         </div>
     )
 }
-

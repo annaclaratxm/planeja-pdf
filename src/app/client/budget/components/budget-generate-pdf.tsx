@@ -10,87 +10,86 @@ const styles = StyleSheet.create({
         padding: 30,
         fontSize: 12,
         fontFamily: 'Helvetica',
-        backgroundColor: '#F5F5F5'
+        backgroundColor: '#FFFFFF',
+        color: '#333333',
     },
     header: {
-        textAlign: 'center',
         marginBottom: 20,
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#333'
+    },
+    headerText: {
+        fontSize: 24,
+        fontWeight: 700,
+        color: '#1a3a5a',
+        textAlign: 'center',
+        marginBottom: 10,
     },
     logoContainer: {
         alignItems: 'center',
-        marginBottom: 15,
-        padding: 10,
-        backgroundColor: '#FFFFFF',
-        borderRadius: 5
+        marginBottom: 20,
     },
     logo: {
         maxWidth: 150,
         maxHeight: 75,
-        objectFit: 'contain'
+        objectFit: 'contain',
     },
-    customerInfo: {
-        marginBottom: 15,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        backgroundColor: '#FFFFFF',
-        padding: 10,
-        borderRadius: 5
-    },
-    customerInfoText: {
-        color: '#555'
+    section: {
+        marginBottom: 20,
+        padding: 15,
+        backgroundColor: '#f8f9fa',
+        borderRadius: 5,
+        borderColor: '#e9ecef',
+        borderWidth: 1,
     },
     sectionTitle: {
-        fontWeight: 'bold',
-        marginTop: 10,
-        marginBottom: 5,
         fontSize: 14,
-        color: '#333',
+        fontWeight: 500,
+        color: '#1a3a5a',
+        marginBottom: 10,
         borderBottomWidth: 1,
-        borderBottomColor: '#E0E0E0',
-        paddingBottom: 3
+        borderBottomColor: '#dee2e6',
+        paddingBottom: 5,
     },
-    categoryItem: {
+    row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginLeft: 10,
-        padding: 5,
-        backgroundColor: '#F9F9F9'
+        marginBottom: 5,
+    },
+    columnLeft: {
+        width: '60%',
+    },
+    columnRight: {
+        width: '35%',
+        textAlign: 'right',
+    },
+    categoryItem: {
+        marginBottom: 10,
+    },
+    categoryName: {
+        fontWeight: 500,
+        marginBottom: 5,
     },
     productItem: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginLeft: 20,
-        padding: 3
+        marginLeft: 10,
     },
     totalSection: {
-        marginTop: 15,
+        marginTop: 20,
         borderTopWidth: 2,
-        borderTopColor: '#333',
+        borderTopColor: '#1a3a5a',
         paddingTop: 10,
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        backgroundColor: '#FFFFFF',
-        padding: 10,
-        borderRadius: 5
     },
-    paymentTerms: {
-        fontSize: 10,
-        marginTop: 15,
-        backgroundColor: '#FFFFFF',
-        padding: 10,
-        borderRadius: 5
+    totalText: {
+        fontSize: 16,
+        fontWeight: 700,
+        color: '#1a3a5a',
     },
     footer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        marginTop: 20,
-        backgroundColor: '#FFFFFF',
-        padding: 10,
-        borderRadius: 5
-    }
+        marginTop: 30,
+        fontSize: 8,
+        color: '#6c757d',
+        textAlign: 'center',
+    },
 });
 
 export const BudgetGeneratePdf = async (budgetId: string) => {
@@ -106,7 +105,6 @@ export const BudgetGeneratePdf = async (budgetId: string) => {
 
         if (budget.user.setting[0].logo) {
             logoSrc = await GetFileFromR2(budget.user.setting[0].logo);
-            console.log('logoSrc: ', logoSrc);
         }
 
         const formatDate = (days: number) => {
@@ -115,55 +113,88 @@ export const BudgetGeneratePdf = async (budgetId: string) => {
             return date.toLocaleDateString('pt-BR');
         };
 
+        const formatCurrency = (value: number) => {
+            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+        };
+
         const BudgetPdfDocument = (
             <Document>
                 <Page size="A4" style={styles.page}>
-                    {logoSrc && (
-                        <Image src={logoSrc} style={styles.logo} />
-                    )}
-
-                    <Text style={styles.header}>
-                        ORÇAMENTO {budget.name}/{new Date().getFullYear()}
-                    </Text>
-
-                    <View style={styles.customerInfo}>
-                        <Text style={styles.customerInfoText}>Cliente: {budget.customer.name}</Text>
-                        <Text style={styles.customerInfoText}>Fone: {budget.customer.phone}</Text>
-                    </View>
-
-                    <Text style={styles.sectionTitle}>ORÇAMENTO</Text>
-
-                    {budget.categories.map((category, index) => (
-                        <View key={index}>
-                            <View style={styles.categoryItem}>
-                                <Text>• {category.name}</Text>
-                                <Text>
-                                    R$ {category.products.reduce((sum, product) => sum + product.price, 0).toFixed(2)}
-                                </Text>
+                    <View style={styles.header}>
+                        {logoSrc && (
+                            <View style={styles.logoContainer}>
+                                <Image src={logoSrc} style={styles.logo} />
                             </View>
+                        )}
+                        <Text style={styles.headerText}>
+                            ORÇAMENTO {budget.name}/{new Date().getFullYear()}
+                        </Text>
+                    </View>
 
-                            {category.products.map((product, productIndex) => (
-                                <View key={productIndex} style={styles.productItem}>
-                                    <Text>- {product.name}</Text>
-                                    <Text>R$ {product.price.toFixed(2)}</Text>
-                                </View>
-                            ))}
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Informações do Cliente</Text>
+                        <View style={styles.row}>
+                            <Text style={styles.columnLeft}>Cliente: {budget.customer.name}</Text>
+                            <Text style={styles.columnRight}>Fone: {budget.customer.phone}</Text>
                         </View>
-                    ))}
-
-                    <View style={styles.totalSection}>
-                        <Text style={styles.sectionTitle}>Total</Text>
-                        <Text style={styles.sectionTitle}>R$ {budget.total.toFixed(2)}</Text>
                     </View>
 
-                    <View style={styles.paymentTerms}>
-                        <Text>Forma e condições de pagamento: 40% de entrada e restante em 4 x com cheque. A vista (1+1) com 5 % de desconto, ou tudo parcelado em até 18 x sem entrada no cartão de crédito com juros simples de 1,1% ao mês</Text>
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Detalhes do Orçamento</Text>
+                        {budget.categories.map((category, index) => (
+                            <View key={index} style={styles.categoryItem}>
+                                <Text style={styles.categoryName}>• {category.name}</Text>
+                                {category.products.map((product, productIndex) => (
+                                    <View key={productIndex} style={styles.productItem}>
+                                        <Text style={styles.columnLeft}>- {product.name}</Text>
+                                        <Text style={styles.columnRight}>{formatCurrency(product.price)}</Text>
+                                    </View>
+                                ))}
+                                <View style={[styles.row, { marginTop: 5 }]}>
+                                    <Text style={styles.columnLeft}>Subtotal {category.name}</Text>
+                                    <Text style={styles.columnRight}>
+                                        {formatCurrency(category.products.reduce((sum, product) => sum + product.price, 0))}
+                                    </Text>
+                                </View>
+                            </View>
+                        ))}
+                    </View>
+                    <View style={[styles.section, styles.totalSection]}>
+                        <View style={styles.row}>
+                            <Text style={[styles.columnLeft, styles.totalText]}>Total do Orçamento</Text>
+                            <Text style={[styles.columnRight, styles.totalText]}>{formatCurrency(budget.total)}</Text>
+                        </View>
                     </View>
 
-                    <View style={styles.footer}>
-                        <Text>Prazo de entrega: {formatDate(90)}</Text>
-                        <Text>Validade deste orçamento: {formatDate(10)}</Text>
+                    {budget.user.setting[0].paymentMethod && <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Condições de Pagamento</Text>
+                        <Text>
+                            {budget.user.setting[0].paymentMethod}
+                        </Text>
+                    </View>}
+
+                    {budget.user.setting[0].observation && <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Observações</Text>
+                        <Text style={{ color: 'red' }}>
+                            {budget.user.setting[0].observation}
+                        </Text>
+                    </View>}
+
+                    <View style={styles.section}>
+                        <Text style={styles.sectionTitle}>Prazos</Text>
+                        {budget.user.setting[0].deliveryTimeDays && <View style={styles.row}>
+                            <Text style={styles.columnLeft}>Prazo de entrega:</Text>
+                            <Text style={styles.columnRight}>{formatDate(budget.user.setting[0].deliveryTimeDays)}</Text>
+                        </View>}
+                        {budget.user.setting[0].budgetValidityDays !== null && <View style={styles.row}>
+                            <Text style={styles.columnLeft}>Validade deste orçamento:</Text>
+                            <Text style={styles.columnRight}>{formatDate(budget.user.setting[0].budgetValidityDays)}</Text>
+                        </View>}
                     </View>
+
+                    <Text style={styles.footer}>
+                        Este documento é uma simulação de orçamento e não possui valor fiscal.
+                    </Text>
                 </Page>
             </Document>
         );

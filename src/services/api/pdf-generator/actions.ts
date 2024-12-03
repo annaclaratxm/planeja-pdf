@@ -57,6 +57,11 @@ export async function generatePdf(budgetId: string) {
                             zipCode: true,
                             state: true,
                             logo: true,
+                            budgetValidityDays: true,
+                            deliveryTimeDays: true,
+                            observation: true,
+                            paymentMethod: true,
+                            responsiblePerson: true
                         }
                     }
                 }
