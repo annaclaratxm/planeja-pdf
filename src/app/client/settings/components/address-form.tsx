@@ -8,7 +8,8 @@ interface AddressFormProps {
         number: number
         zipCode: string
         state: string
-        city: string
+        city: string,
+        neighborhood: string
     }
     setFormData: React.Dispatch<React.SetStateAction<unknown>>
 }
@@ -84,7 +85,6 @@ export default function AddressForm({ formData, setFormData }: AddressFormProps)
                 </div>
                 <div>
                     <Label htmlFor="city" className="text-white">Cidade</Label>
-
                     <Input
                         id="city"
                         placeholder="Cidade"
@@ -93,6 +93,16 @@ export default function AddressForm({ formData, setFormData }: AddressFormProps)
                         onChange={(e) => setFormData({ ...formData, city: e.target.value })}
                     />
                 </div>
+            </div>
+            <div>
+                <Label htmlFor="neighborhood" className="text-white">Bairro</Label>
+                <Input
+                    id="neighborhood"
+                    placeholder="Bairro"
+                    className="bg-[#132236] text-white placeholder-gray-400 border-[#0051FF] focus:ring-[#0051FF]"
+                    value={formData.neighborhood}
+                    onChange={(e) => setFormData({ ...formData, neighborhood: e.target.value })}
+                />
             </div>
         </div>
     )

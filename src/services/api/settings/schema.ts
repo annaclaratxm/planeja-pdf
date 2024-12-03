@@ -18,4 +18,5 @@ export const upsertSettingsSchema = z.object({
     budgetValidityDays: z.number().optional().nullable(),
     createdAt: z.date().optional().nullable(),
     updatedAt: z.date().optional().nullable(),
+    neighborhood: z.string().optional().nullable(),
 });

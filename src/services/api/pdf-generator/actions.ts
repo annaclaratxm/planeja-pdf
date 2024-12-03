@@ -61,7 +61,8 @@ export async function generatePdf(budgetId: string) {
                             deliveryTimeDays: true,
                             observation: true,
                             paymentMethod: true,
-                            responsiblePerson: true
+                            responsiblePerson: true,
+                            neighborhood: true
                         }
                     }
                 }

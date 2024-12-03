@@ -45,7 +45,8 @@ export async function upsertSettings(input: z.infer<typeof upsertSettingsSchema>
             budgetValidityDays: input.budgetValidityDays,
             deliveryTimeDays: input.deliveryTimeDays,
             observation: input.observation,
-            paymentMethod: input.paymentMethod
+            paymentMethod: input.paymentMethod,
+            neighborhood: input.neighborhood
         },
         create: {
             userId: user.id,
@@ -64,7 +65,8 @@ export async function upsertSettings(input: z.infer<typeof upsertSettingsSchema>
             budgetValidityDays: input.budgetValidityDays,
             deliveryTimeDays: input.deliveryTimeDays,
             observation: input.observation,
-            paymentMethod: input.paymentMethod
+            paymentMethod: input.paymentMethod,
+            neighborhood: input.neighborhood
         },
     })
 

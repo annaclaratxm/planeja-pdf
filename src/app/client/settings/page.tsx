@@ -28,7 +28,8 @@ export default function CompanySettings() {
     budgetValidityDays: 0,
     deliveryTimeDays: 0,
     observation: '',
-    paymentMethod: ''
+    paymentMethod: '',
+    neighborhood: ''
   })
 
   useEffect(() => {
@@ -42,7 +43,8 @@ export default function CompanySettings() {
             budgetValidityDays: settings.budgetValidityDays || 0,
             deliveryTimeDays: settings.deliveryTimeDays || 0,
             paymentMethod: settings.paymentMethod || '',
-            observation: settings.observation || ''
+            observation: settings.observation || '',
+            neighborhood: settings.neighborhood || ''
           });
         }
       } catch (error) {

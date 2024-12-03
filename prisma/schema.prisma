@@ -72,6 +72,7 @@ model Settings {
   zipCode            String
   state              String
   city               String
+  neighborhood       String?
   phone              String
   responsiblePerson  String
   logo               String?
