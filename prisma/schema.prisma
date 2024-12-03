@@ -46,6 +46,7 @@ model User {
   stripeSubscriptionId     String?
   stripeSubscriptionStatus String?
   stripePriceId            String?
+  subscriptions            Subscription[]
 
   accounts  Account[]
   sessions  Session[]
@@ -138,4 +139,57 @@ enum StatusBudget {
   Enviado
   Aceito
   Negado
+}
+
+model Plan {
+  id            String         @id @default(cuid())
+  name          String         @unique
+  description   String?
+  price         Float
+  interval      Interval
+  stripePriceId String         @unique
+  subscriptions Subscription[]
+}
+
+model Subscription {
+  id                   String             @id @default(cuid())
+  userId               String
+  planId               String
+  stripeSubscriptionId String?            @unique
+  status               SubscriptionStatus
+  startDate            DateTime
+  endDate              DateTime?
+  cancelAtPeriodEnd    Boolean            @default(false)
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan                 Plan               @relation(fields: [planId], references: [id], onDelete: Cascade)
+  payments             Payment[]
+}
+
+model Payment {
+  id              String        @id @default(cuid())
+  subscriptionId  String
+  amount          Float
+  paymentDate     DateTime
+  status          PaymentStatus
+  stripePaymentId String?       @unique
+  subscription    Subscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+}
+
+enum Interval {
+  Mensal
+  Anual
+}
+
+enum SubscriptionStatus {
+  Active
+  PastDue
+  Canceled
+  Incomplete
+  IncompleteExpired
+}
+
+enum PaymentStatus {
+  Pending
+  Completed
+  Failed
 }
