@@ -12,6 +12,10 @@ export const upsertSettingsSchema = z.object({
     phone: z.string(),
     responsiblePerson: z.string(),
     logo: z.string().optional().nullable(),
+    paymentMethod: z.string().optional().nullable(),
+    observation: z.string().optional().nullable(),
+    deliveryTimeDays: z.number().optional().nullable(),
+    budgetValidityDays: z.number().optional().nullable(),
     createdAt: z.date().optional().nullable(),
-    updatedAt: z.date().optional().nullable()
+    updatedAt: z.date().optional().nullable(),
 });

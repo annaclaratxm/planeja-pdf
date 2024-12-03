@@ -40,7 +40,12 @@ export async function upsertSettings(input: z.infer<typeof upsertSettingsSchema>
             city: input.city,
             phone: input.phone,
             responsiblePerson: input.responsiblePerson,
-            logo: input.logo
+            logo: input.logo,
+            updatedAt: new Date(),
+            budgetValidityDays: input.budgetValidityDays,
+            deliveryTimeDays: input.deliveryTimeDays,
+            observation: input.observation,
+            paymentMethod: input.paymentMethod
         },
         create: {
             userId: user.id,
@@ -53,7 +58,13 @@ export async function upsertSettings(input: z.infer<typeof upsertSettingsSchema>
             city: input.city,
             phone: input.phone,
             responsiblePerson: input.responsiblePerson,
-            logo: input.logo
+            logo: input.logo,
+            updatedAt: new Date(),
+            createdAt: new Date(),
+            budgetValidityDays: input.budgetValidityDays,
+            deliveryTimeDays: input.deliveryTimeDays,
+            observation: input.observation,
+            paymentMethod: input.paymentMethod
         },
     })
 

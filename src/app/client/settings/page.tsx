@@ -7,6 +7,7 @@ import { ArrowLeft } from 'lucide-react'
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import AddressForm from './components/address-form'
+import AdditionalInfoForm from "./components/aditional-info"
 import CompanyDetailsForm from './components/company-details-form'
 import ContactForm from './components/contact-form'
 import LogoUpload from './components/logo-upload'
@@ -23,7 +24,11 @@ export default function CompanySettings() {
     city: '',
     phone: '',
     responsiblePerson: '',
-    logo: ''
+    logo: '',
+    budgetValidityDays: 0,
+    deliveryTimeDays: 0,
+    observation: '',
+    paymentMethod: ''
   })
 
   useEffect(() => {
@@ -33,8 +38,12 @@ export default function CompanySettings() {
         if (settings) {
           setFormData({
             ...settings,
-            logo: settings.logo || ''
-          })
+            logo: settings.logo || '',
+            budgetValidityDays: settings.budgetValidityDays || 0,
+            deliveryTimeDays: settings.deliveryTimeDays || 0,
+            paymentMethod: settings.paymentMethod || '',
+            observation: settings.observation || ''
+          });
         }
       } catch (error) {
         console.error('Failed to fetch settings:', error)
@@ -74,6 +83,8 @@ export default function CompanySettings() {
               <CompanyDetailsForm formData={formData} setFormData={setFormData} />
               <AddressForm formData={formData} setFormData={setFormData} />
               <ContactForm formData={formData} setFormData={setFormData} />
+              <AdditionalInfoForm formData={formData} setFormData={setFormData} />
+              <LogoUpload formData={formData} setFormData={setFormData} />
               <Button
                 type="submit"
                 onClick={handleSubmit}
@@ -81,7 +92,6 @@ export default function CompanySettings() {
               >
                 Salvar informações
               </Button>
-              <LogoUpload formData={formData} setFormData={setFormData} />
             </form>
           </CardContent>
         </Card>
