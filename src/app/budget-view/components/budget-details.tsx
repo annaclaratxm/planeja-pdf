@@ -1,4 +1,4 @@
-'use client';
+'use strict';
 
 import { PDF } from '@/services/api/pdf-generator/types';
 import Categories from './categories';

@@ -1,3 +1,4 @@
+'use strict';
 
 interface PaymentAndNotesProps {
     paymentMethod?: string | null

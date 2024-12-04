@@ -1,16 +1,16 @@
-'use client'
+'use strict';
 
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import {
     DeleteFileFromR2,
     GetFileFromR2,
     UploadFileToR2
-} from "@/services/bucket/cloudflare/"
+} from "@/services/bucket/cloudflare/";
 
-import { Box, Trash2 } from 'lucide-react'
-import Image from 'next/image'
-import { useEffect, useState } from 'react'
+import { Box, Trash2 } from 'lucide-react';
+import Image from 'next/image';
+import { useEffect, useState } from 'react';
 
 interface LogoUploadProps {
     formData: {

@@ -1,3 +1,4 @@
+'use strict';
 
 interface DeadlinesProps {
     deliveryTimeDays?: number | null

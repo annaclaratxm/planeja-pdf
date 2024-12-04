@@ -1,6 +1,5 @@
-
+'use strict';
 /* eslint-disable @next/next/no-img-element */
-"use client";
 import Image from 'next/image';
 
 interface HeaderProps {
@@ -11,19 +10,19 @@ interface HeaderProps {
 export default function Header({ logo, year }: HeaderProps) {
     const file = logo ? URL.createObjectURL(logo) : '';
     return (
-        <div className="p-6 text-center">
+        <div className="p-2 text-center">
             {file && (
-                <div className="mb-4">
+                <div className="mb-2">
                     <Image
                         src={file}
                         alt="Preview"
-                        width={160}
-                        height={160}
+                        width={120}
+                        height={120}
                         className="mx-auto"
                     />
                 </div>
             )}
-            <h1 className="text-2xl font-bold text-gray-800">ORÇAMENTO / {year}</h1>
+            <h1 className="text-xl font-bold text-gray-800">ORÇAMENTO / {year}</h1> {/* Reduzi o tamanho do texto */}
         </div>
     );
 }
