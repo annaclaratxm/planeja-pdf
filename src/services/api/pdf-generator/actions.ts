@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/prisma';
 
-export async function generatePdf(budgetId: string) {
+export async function getBudgetDetails(budgetId: string) {
     const budget = await prisma.budget.findUnique({
         where: {
             id: budgetId
@@ -36,21 +36,13 @@ export async function generatePdf(budgetId: string) {
                     name: true,
                     setting: {
                         select: {
-                            city: true,
-                            cnpj: true,
                             companyName: true,
-                            number: true,
-                            street: true,
                             phone: true,
-                            zipCode: true,
-                            state: true,
-                            logo: true,
                             budgetValidityDays: true,
                             deliveryTimeDays: true,
                             observation: true,
                             paymentMethod: true,
                             responsiblePerson: true,
-                            neighborhood: true
                         }
                     }
                 }
@@ -62,3 +54,34 @@ export async function generatePdf(budgetId: string) {
 
     return budget;
 }
+
+export async function getSettingByBudgetId(budgetId: string) {
+    const budget = await prisma.budget.findUnique({
+        where: {
+            id: budgetId
+        },
+        select: {
+            user: {
+                select: {
+                    setting: {
+                        select: {
+                            city: true,
+                            cnpj: true,
+                            companyName: true,
+                            number: true,
+                            street: true,
+                            phone: true,
+                            zipCode: true,
+                            state: true,
+                            neighborhood: true,
+                            logo: true,
+                        }
+                    }
+                }
+            }
+        }
+    }).then((budget) => budget?.user?.setting?.[0]);
+
+    return budget;
+}
+

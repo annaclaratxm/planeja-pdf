@@ -1,85 +1,77 @@
-'use client';
+"use client";
 
-import { generatePdf } from '@/services/api/pdf-generator/actions';
-import { PDF } from '@/services/api/pdf-generator/types';
-import { GetFileFromR2 } from '@/services/bucket/cloudflare';
 import { Loader2 } from 'lucide-react';
-import { notFound } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import BudgetDetails from '../components/budget-details';
+import Footer from '../components/footer';
+import Header from '../components/header';
+import { getLayoutData, LayoutData } from '../lib/getLayoutData';
 
 interface PageProps {
-    params: {
+    params: Promise<{
         id: string;
-    };
+    }>;
 }
 
-const BudgetView = (props: PageProps) => {
-    const { params } = props;
-    const [budget, setBudget] = useState<PDF | null>(null);
-    const [logoSrc, setLogoSrc] = useState<File | undefined>();
-    const [hasError, setHasError] = useState(false);
-    const [preview, setPreview] = useState<string | null>(null);
+const BudgetPage: React.FC<PageProps> = ({ params }) => {
+    const [layout, setLayout] = useState<LayoutData | null>(null);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
 
     useEffect(() => {
-        const { id } = params;
-
-        const fetchBudget = async () => {
+        const fetchData = async () => {
             try {
-                const fetchedBudget = await generatePdf(id);
-
-                if (!fetchedBudget || !fetchedBudget.user?.setting?.[0] || !fetchedBudget.customer) {
-                    setHasError(true);
-                    return;
-                }
-
-                setBudget(fetchedBudget);
-
-                if (fetchedBudget.user.setting[0].logo && !logoSrc) {
-                    const fetchedLogo = await GetFileFromR2(fetchedBudget.user.setting[0].logo);
-                    setLogoSrc(fetchedLogo);
-                }
-            } catch (error) {
-                console.error('Error fetching budget:', error);
-                setHasError(true);
+                const { id } = await params;
+                const data = await getLayoutData(id);
+                setLayout(data);
+            } catch (err) {
+                setError('Erro ao carregar os dados: ' + (err as Error).message);
+            } finally {
+                setLoading(false);
             }
         };
-        if (params.id) {
-            fetchBudget();
-        }
-    }, [params, logoSrc]);
 
-    useEffect(() => {
-        const loadImage = async () => {
-            if (preview && !hasError) {
-                try {
-                    const imageUrl = await GetFileFromR2(preview);
-                    setPreview(URL.createObjectURL(imageUrl));
-                } catch (error) {
-                    console.error('Failed to load image:', error);
-                }
-            }
-        };
-        loadImage();
-    }, [preview, hasError]);
+        fetchData();
+    }, [params]);
 
-    if (hasError) {
-        return notFound();
+    if (loading) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen">
+                <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                <p className="mt-2 text-sm text-muted-foreground">Carregando orçamento...</p>
+            </div>
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen">
+                <p className="text-red-500">{error}</p>
+            </div>
+        );
+    }
+
+    if (!layout) {
+        return (
+            <div className="flex flex-col items-center justify-center min-h-screen">
+                <p className="text-sm text-muted-foreground">Nenhum dado encontrado.</p>
+            </div>
+        );
     }
 
     return (
-        <div className="min-h-screen flex items-center justify-center">
-            {budget ? (
-                <BudgetDetails budget={budget} logoSrc={logoSrc} />
-            ) : (
-                <div className="flex flex-col items-center">
-                    <Loader2 className="h-8 w-8 animate-spin text-primary" />
-                    <p className="mt-2 text-sm text-muted-foreground">Loading budget...</p>
-                </div>
-            )}
+        <div className="min-h-screen">
+            <header>
+                <Header logo={layout.header.imageUrl} year={new Date().getFullYear()} />
+            </header>
+            <main>
+                <BudgetDetails budget={layout.budget} />
+            </main>
+            <footer>
+                <Footer cnpj={layout.footer.cnpj} address={layout.footer.address} />
+            </footer>
         </div>
     );
 };
 
-export default BudgetView;
-
+export default BudgetPage;
