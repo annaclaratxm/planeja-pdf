@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 body {
   background-color: white;
   color: black;
@@ -6,83 +10,86 @@ body {
   font-family: Arial, sans-serif;
 }
 
-/* Ajustes de impressão */
 @media print {
   body {
-    background-color: white !important;
-    color: black !important;
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: white;
+  }
+
+  .pdf-container {
+    display: block;
   }
 
   .a4-page {
-    background-color: white;
-    color: black;
-    width: 210mm;
-    min-height: 297mm;
-    margin: 0 auto;
+    page-break-after: always;
+    page-break-inside: avoid;
     display: flex;
     flex-direction: column;
-  }
-
-  .content {
-    padding: 10mm;
-  }
-
-  header,
-  footer {
-    display: block;
-    position: running(headerfooter);
-  }
-
-  @page {
-    margin: 10mm;
-    @top-center {
-      content: element(header);
-    }
-    @bottom-center {
-      content: element(footer);
-    }
-  }
-}
-@media print {
-  @page {
-    margin: 10mm;
-  }
-
-  body {
+    width: 100%;
+    height: auto;
     margin: 0;
-    padding: 0;
-    background-color: white;
-    color: black;
   }
 
-  header,
-  footer {
-    display: block;
-    position: running(headerfooter);
+  .pdf-header,
+  .pdf-footer {
+    position: fixed;
+    width: 100%;
+    left: 0;
+    z-index: 999;
   }
 
   .pdf-header {
-    position: fixed;
     top: 0;
-    width: 100%;
-    background-color: white;
-    padding: 10px 0;
-    text-align: center;
-    z-index: 1000;
+    margin-top: 0;
   }
 
   .pdf-footer {
-    position: fixed;
     bottom: 0;
-    width: 100%;
-    background-color: white;
-    padding: 10px 0;
-    text-align: center;
-    z-index: 1000;
+    margin-bottom: 0;
+    color: black; /* Define a cor do texto como preto */
   }
 
   .pdf-content {
-    margin-top: 100px;
-    margin-bottom: 100px;
+    flex: 1;
+    margin-top: 25px; /* Espaço para o cabeçalho */
+    margin-bottom: 25px; /* Espaço para o rodapé */
+    overflow: hidden; /* Adicionado para evitar que o conteúdo transborde */
+    color: black; /* Define a cor do texto como preto */
+  }
+
+  .pdf-page-number {
+    text-align: right;
+    font-size: 10px;
+    color: black; /* Define a cor do texto como preto */
+  }
+}
+
+/* Ajustes para renderização na tela */
+@media screen {
+  .pdf-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+  }
+
+  .a4-page {
+    border: 1px solid #ccc;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  }
+
+  .pdf-footer {
+    color: black; /* Define a cor do texto como preto */
+  }
+
+  .pdf-content {
+    flex: 1;
+    margin-top: 25px; /* Espaço para o cabeçalho */
+    margin-bottom: 25px; /* Espaço para o rodapé */
+    overflow: hidden; /* Adicionado para evitar que o conteúdo transborde */
+    color: black; /* Define a cor do texto como preto */
   }
 }

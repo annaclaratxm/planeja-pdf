@@ -62,6 +62,7 @@
     "next-auth": "^4.24.10",
     "next-themes": "^0.3.0",
     "planeja-pdf": "file:",
+    "puppeteer": "^23.10.1",
     "react": "^18.3.1",
     "react-day-picker": "^8.10.1",
     "react-dom": "^18.3.1",

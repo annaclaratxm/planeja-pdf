@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import BudgetDetails from '../components/budget-details';
 import Footer from '../components/footer';
 import Header from '../components/header';
+import PdfLayout from '../components/pdf-layout';
 import { getLayoutData, LayoutData } from '../lib/getLayoutData';
 
 interface PageProps {
@@ -60,17 +61,12 @@ const BudgetPage: React.FC<PageProps> = ({ params }) => {
     }
 
     return (
-        <div className="min-h-screen">
-            <header>
-                <Header logo={layout.header.imageUrl} year={new Date().getFullYear()} />
-            </header>
-            <main>
-                <BudgetDetails budget={layout.budget} />
-            </main>
-            <footer>
-                <Footer cnpj={layout.footer.cnpj} address={layout.footer.address} />
-            </footer>
-        </div>
+        <PdfLayout
+            header={<Header logo={layout.header.imageUrl} year={new Date().getFullYear()} />}
+            footer={<Footer cnpj={layout.footer.cnpj} address={layout.footer.address} />}
+        >
+            <BudgetDetails budget={layout.budget} />
+        </PdfLayout>
     );
 };
 
