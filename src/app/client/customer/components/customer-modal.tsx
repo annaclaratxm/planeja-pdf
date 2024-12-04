@@ -157,7 +157,7 @@ export function CustomerModal({
 
             if (customer) {
                 await upsertCustomer({
-                    ...customerData,
+                    ...customerData,    
                     id: customer.id,
                     birthdate: values.birthdate ? new Date(values.birthdate) : undefined,
                 });

@@ -81,6 +81,8 @@ export async function upsertCustomer(input: z.infer<typeof upsertCustomerSchema>
                 email: input.email,
                 name: input.name,
                 phone: input.phone,
+                cnpj: input.cnpj,
+                cpf: input.cpf
             },
         })
 
@@ -122,6 +124,8 @@ export async function upsertCustomer(input: z.infer<typeof upsertCustomerSchema>
             email: input.email,
             birthdate: input.birthdate,
             userId: user.id,
+            cnpj: input.cnpj,
+            cpf: input.cpf
         },
     })
 

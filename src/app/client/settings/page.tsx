@@ -2,6 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { toast } from "@/hooks/use-toast"
 import { getSettings, upsertSettings } from '@/services/api/settings/actions'
 import { ArrowLeft } from 'lucide-react'
 import { useRouter } from "next/navigation"
@@ -58,7 +59,11 @@ export default function CompanySettings() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     try {
-      await upsertSettings(formData)
+      await upsertSettings(formData);
+      toast({
+        title: 'Configurações atualizadas',
+        description: 'Suas configurações foram atualizadas com sucesso.',
+      });
     } catch (error) {
       console.error('Failed to save settings:', error)
     }
