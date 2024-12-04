@@ -74,12 +74,10 @@ export default function LogoUpload({ formData, setFormData }: LogoUploadProps) {
     };
 
     const handleUpload = async (file: File) => {
-        console.log('Uploading image:', file);
         if (file) {
             try {
                 const key = `logos/${Date.now()}-${file.name}`;
-                const fileUrl = await UploadFileToR2(file, key);
-                console.log('Uploaded image:', fileUrl);
+                await UploadFileToR2(file, key);
                 setFormData({ ...formData, logo: key });
             } catch (error) {
                 console.error('Failed to upload image:', error);

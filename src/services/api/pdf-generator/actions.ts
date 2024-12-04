@@ -1,23 +1,11 @@
 'use server'
 
-import { authOptions } from '@/lib/auth'
-
-import { prisma } from '@/lib/prisma'
-import { getServerSession } from 'next-auth'
+import { prisma } from '@/lib/prisma';
 
 export async function generatePdf(budgetId: string) {
-    const session = await getServerSession(authOptions)
-
-    if (!session) {
-        throw new Error("User is not logged");
-    }
-
     const budget = await prisma.budget.findUnique({
         where: {
-            id: budgetId,
-            user: {
-                email: session.user.email
-            }
+            id: budgetId
         },
         select: {
             name: true,
