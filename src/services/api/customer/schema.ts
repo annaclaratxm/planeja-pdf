@@ -6,7 +6,10 @@ export const upsertCustomerSchema = z.object({
     phone: z.string().optional(),
     email: z.string().optional().nullable(),
     birthdate: z.date().optional().nullable(),
-    userId: z.string().optional()
+    userId: z.string().optional(),
+    cpf: z.string().optional(),
+    cnpj: z.string().optional(),
+    addrres: z.string().optional()
 })
 
 export const deleteCustomerSchema = z.object({

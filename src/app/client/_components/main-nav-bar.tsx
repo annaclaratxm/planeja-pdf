@@ -1,6 +1,6 @@
 "use client"
 
-import { FileSpreadsheet, FileText, Home, LogOut, Menu, Settings, Users } from 'lucide-react'
+import { FileSpreadsheet, FileText, Home, LogOut, Menu, Settings, Users, Wallet } from 'lucide-react'
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 import { useState } from "react"
@@ -40,6 +40,11 @@ export default function MainNavBar() {
             name: "Configurações",
             href: "/client/settings",
             icon: Settings,
+        },
+        {
+            name: "Assinatura",
+            href: "/client/payment",
+            icon: Wallet,
         },
     ]
 

@@ -7,101 +7,105 @@ import { Document, Image, Page, StyleSheet, Text, View, pdf } from '@react-pdf/r
 
 const styles = StyleSheet.create({
     page: {
-        padding: 30,
-        fontSize: 12,
+        padding: 40,
+        fontSize: 10,
         fontFamily: 'Helvetica',
         backgroundColor: '#FFFFFF',
         color: '#333333',
     },
     header: {
         marginBottom: 20,
+        textAlign: 'center',
     },
     headerText: {
-        fontSize: 24,
-        fontWeight: 700,
+        fontSize: 14,
+        fontWeight: 'bold',
         color: '#1a3a5a',
-        textAlign: 'center',
-        marginBottom: 10,
-    },
-    logoContainer: {
-        alignItems: 'center',
-        marginBottom: 20,
-    },
-    logo: {
-        maxWidth: 150,
-        maxHeight: 75,
-        objectFit: 'contain',
+        textTransform: 'uppercase',
     },
     section: {
-        marginBottom: 20,
-        padding: 15,
-        backgroundColor: '#f8f9fa',
-        borderRadius: 5,
-        borderColor: '#e9ecef',
-        borderWidth: 1,
-    },
-    sectionTitle: {
-        fontSize: 14,
-        fontWeight: 500,
-        color: '#1a3a5a',
-        marginBottom: 10,
+        marginBottom: 15,
+        paddingBottom: 10,
         borderBottomWidth: 1,
         borderBottomColor: '#dee2e6',
-        paddingBottom: 5,
     },
-    row: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
+    sectionTitle: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        color: '#1a3a5a',
         marginBottom: 5,
     },
-    columnLeft: {
+    item: {
+        marginBottom: 5,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    },
+    itemText: {
+        width: '80%',
+    },
+    itemValue: {
+        width: '20%',
+        textAlign: 'right',
+    },
+    totalSection: {
+        paddingTop: 5,
+    },
+    totalText: {
+        fontSize: 12,
+        fontWeight: 'bold',
+        color: '#1a3a5a',
+        textAlign: 'right',
+    },
+    notesSection: {
+        marginTop: 15,
+        padding: 10,
+    },
+    notesText: {
+        fontSize: 10,
+        color: '#555555',
+        lineHeight: 1.5,
+    },
+    assinature: {
+        textAlign: 'center',
+        fontSize: 10,
+        color: '#333333',
+    },
+    assinatureLine: {
+        borderTop: 1,
+        borderTopWidth: 2,
+        borderTopColor: '#000000'
+    },
+    footer: {
+        fontSize: 10,
+        textAlign: 'center',
+        color: '#333333',
+    },
+    signatureLine: {
+        marginVertical: 20,
+        borderBottomWidth: 1,
+        borderBottomColor: '#000000',
+        width: '70%',
+        alignSelf: 'center',
+        paddingBottom: 5,
+    },
+    signatureText: {
+        fontSize: 10,
+        textAlign: 'center',
+        color: '#333333',
+        marginTop: 5,
+    }, columnLeft: {
         width: '60%',
     },
     columnRight: {
         width: '35%',
         textAlign: 'right',
     },
-    categoryItem: {
-        marginBottom: 10,
-    },
-    categoryName: {
-        fontWeight: 500,
-        marginBottom: 5,
-    },
-    productItem: {
+    row: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        marginLeft: 10,
-    },
-    totalSection: {
-        marginTop: 20,
-        borderTopWidth: 2,
-        borderTopColor: '#1a3a5a',
-        paddingTop: 10,
-    },
-    totalText: {
-        fontSize: 16,
-        fontWeight: 700,
-        color: '#1a3a5a',
-    },
-    footer: {
-        marginTop: 20,
-        padding: 10,
-        borderTop: '2px solid #dee2e6',
-        backgroundColor: '#f8f9fa',
-    },
-    footerText: {
-        fontSize: 12,
-        color: '#000000',
-        textAlign: 'center',
         marginBottom: 5,
     },
-    footerAddress: {
-        fontSize: 12,
-        color: '#000000',
-        textAlign: 'center',
-        marginTop: 10,
-    },
+
 });
 
 export const BudgetGeneratePdf = async (budgetId: string) => {
@@ -125,72 +129,71 @@ export const BudgetGeneratePdf = async (budgetId: string) => {
             return date.toLocaleDateString('pt-BR');
         };
 
-        const formatCurrency = (value: number) => {
-            return value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-        };
+        const formatCurrency = (value: number) =>
+            value.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
 
         const BudgetPdfDocument = (
             <Document>
                 <Page size="A4" style={styles.page}>
+                    {/* Header */}
                     <View style={styles.header}>
                         {logoSrc && (
-                            <View style={styles.logoContainer}>
-                                <Image src={logoSrc} style={styles.logo} />
-                            </View>
+                            <Image
+                                src={logoSrc}
+                                style={{
+                                    maxHeight: 160,
+                                    maxWidth: 160,
+                                    objectFit: 'contain',
+                                    alignSelf: 'center',
+                                }}
+                            />
                         )}
-                        <Text style={styles.headerText}>
-                            ORÇAMENTO {budget.name}/{new Date().getFullYear()}
-                        </Text>
+                        <Text style={styles.headerText}>ORÇAMENTO / {new Date().getFullYear()}</Text>
                     </View>
 
+                    {/* Customer Info */}
                     <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Informações do Cliente</Text>
-                        <View style={styles.row}>
-                            <Text style={styles.columnLeft}>Cliente: {budget.customer.name}</Text>
-                            <Text style={styles.columnRight}>Fone: {budget.customer.phone}</Text>
-                        </View>
+                        <Text>Cliente: {budget.customer.name}</Text>
+                        <Text>Fone: {budget.customer.phone}</Text>
                     </View>
 
-                    <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Detalhes do Orçamento</Text>
-                        {budget.categories.map((category, index) => (
-                            <View key={index} style={styles.categoryItem}>
-                                <Text style={styles.categoryName}>• {category.name}</Text>
-                                {category.products.map((product, productIndex) => (
-                                    <View key={productIndex} style={styles.productItem}>
-                                        <Text style={styles.columnLeft}>- {product.name}</Text>
-                                        <Text style={styles.columnRight}>{formatCurrency(product.price)}</Text>
-                                    </View>
-                                ))}
-                                <View style={[styles.row, { marginTop: 5 }]}>
-                                    <Text style={styles.columnLeft}>Subtotal {category.name}</Text>
-                                    <Text style={styles.columnRight}>
-                                        {formatCurrency(category.products.reduce((sum, product) => sum + product.price, 0))}
-                                    </Text>
+                    {/* Budget Details */}
+                    {budget.categories.map((category, index) => (
+                        <View key={index} style={styles.section}>
+                            <Text style={styles.sectionTitle}>{category.name.toUpperCase()}</Text>
+                            {category.products.map((product, idx) => (
+                                <View key={idx} style={styles.item}>
+                                    <Text style={styles.itemText}>{`• ${product.name}`}</Text>
+                                    <Text style={styles.itemValue}>{formatCurrency(product.price)}</Text>
                                 </View>
-                            </View>
-                        ))}
-                    </View>
-                    <View style={[styles.section, styles.totalSection]}>
-                        <View style={styles.row}>
-                            <Text style={[styles.columnLeft, styles.totalText]}>Total do Orçamento</Text>
-                            <Text style={[styles.columnRight, styles.totalText]}>{formatCurrency(budget.total)}</Text>
+                            ))}
+                            <Text style={styles.totalText}>
+                                Total {category.name}: {formatCurrency(category.products.reduce((sum, prod) => sum + prod.price, 0))}
+                            </Text>
                         </View>
+                    ))}
+
+                    {/* General Total */}
+                    <View style={styles.totalSection}>
+                        <Text style={styles.totalText}>Total geral do orçamento: {formatCurrency(budget.total)}</Text>
                     </View>
 
-                    {budget.user.setting[0].paymentMethod && <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Condições de Pagamento</Text>
-                        <Text>
-                            {budget.user.setting[0].paymentMethod}
-                        </Text>
-                    </View>}
+                    {/* Payment and Notes */}
+                    {budget.user.setting[0].paymentMethod && (
+                        <View style={styles.notesSection}>
+                            <Text>Formas de pagemento</Text>
+                            <Text style={styles.notesText}>
+                                {budget.user.setting[0].paymentMethod}
+                            </Text>
+                        </View>
+                    )}
 
-                    {budget.user.setting[0].observation && <View style={styles.section}>
-                        <Text style={styles.sectionTitle}>Observações</Text>
-                        <Text style={{ color: 'red' }}>
-                            {budget.user.setting[0].observation}
-                        </Text>
-                    </View>}
+                    {budget.user.setting[0].observation && (
+                        <View style={styles.notesSection}>
+                            <Text>Observações</Text>
+                            <Text style={styles.notesText}>{budget.user.setting[0].observation}</Text>
+                        </View>
+                    )}
 
                     <View style={styles.section}>
                         <Text style={styles.sectionTitle}>Prazos</Text>
@@ -203,39 +206,24 @@ export const BudgetGeneratePdf = async (budgetId: string) => {
                             <Text style={styles.columnRight}>{formatDate(budget.user.setting[0].budgetValidityDays)}</Text>
                         </View>}
                     </View>
-                    <View style={styles.footer}>
-                        <Text style={styles.footerText}>
-                            {budget.user.setting[0].companyName}
-                        </Text>
-                        <Text style={styles.footerText}>
-                            {budget.user.setting[0].responsiblePerson}
-                        </Text>
-                        <Text style={styles.footerText}>
-                            {budget.user.setting[0].phone}
-                        </Text>
-                        <Text style={styles.footerText}>
-                            {budget.user.setting[0].city}, {new Date().toLocaleDateString('pt-BR')}
-                        </Text>
 
-                        <View style={styles.footerAddress}>
-                            <Text style={styles.footerText}>
-                                {budget.user.setting[0].street}, {budget.user.setting[0].number}, {budget.user.setting[0].neighborhood} - {budget.user.setting[0].city} - {budget.user.setting[0].state} / {budget.user.setting[0].zipCode}
-                            </Text>
-                            <View />
-                            <View>
-                                <Text style={styles.footerText}>
-                                    Telefone: {budget.user.setting[0].phone}
-                                </Text>
-                                <View />
-                                <View>
-                                    <Text style={styles.footerText}>
-                                        CNPJ: {budget.user.setting[0].cnpj}
-                                    </Text>
-                                </View>
+                    <View style={{ padding: 20 }} />
+                    <View style={styles.signatureLine} />
 
-                            </View>
-                        </View>
+                    <View style={styles.assinature} >
+                        <Text>{budget.user.setting[0].companyName}</Text>
+                        <Text>{budget.user.setting[0].responsiblePerson}</Text>
+                        <Text>{budget.user.setting[0].phone}</Text>
                     </View>
+
+                    {/* Footer */}
+                    <View style={[styles.footer, { position: 'absolute', bottom: 40, left: 40, right: 40 }]} fixed>
+                        <Text>
+                            {`${budget.user.setting[0].street}, ${budget.user.setting[0].number}, ${budget.user.setting[0].neighborhood} - ${budget.user.setting[0].city} - ${budget.user.setting[0].state.toUpperCase()} / CEP ${budget.user.setting[0].zipCode}`}
+                        </Text>
+                        <Text>{`CNPJ: ${budget.user.setting[0].cnpj}`}</Text>
+                    </View>
+
                 </Page>
             </Document>
         );

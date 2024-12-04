@@ -12,6 +12,7 @@ import { useCallback, useEffect, useState } from "react"
 
 export default function BudgetForm({ initialData, dataCustomer }: { initialData?: BudgetType | null, dataCustomer: Customer[] }) {
     const router = useRouter()
+    const [isSubmitting, setIsSubmitting] = useState(true);
 
     const [budget, setBudget] = useState<BudgetType>(() => initialData || {
         name: '',
@@ -24,17 +25,7 @@ export default function BudgetForm({ initialData, dataCustomer }: { initialData?
                 price: 0
             }]
         }]
-    })
-
-    const handleSubmit = useCallback(async () => {
-        try {
-            await upsertBudget(budget)
-            router.push('/client/budget')
-            router.refresh()
-        } catch (error) {
-            console.error('Error saving budget:', error)
-        }
-    }, [budget, router])
+    });
 
     const addCategory = useCallback(() => {
         setBudget(prev => ({
@@ -84,8 +75,23 @@ export default function BudgetForm({ initialData, dataCustomer }: { initialData?
             return total + category.products.reduce((catTotal, product) => catTotal + (product.price || 0), 0)
         }, 0)
         setBudget(prev => ({ ...prev, total }))
+        if (total > 0) {
+            setIsSubmitting(false)
+        }
         return total;
     }, [budget.categories]);
+
+    const handleSubmit = useCallback(async () => {
+        if (isSubmitting) return;
+
+        setIsSubmitting(true);
+        try {
+            await upsertBudget(budget);
+            router.push('/client/budget');
+        } catch (error) {
+            console.error('Error saving budget:', error);
+        }
+    }, [budget, router, isSubmitting]);
 
     useEffect(() => {
         calculateTotalBudget();
@@ -231,7 +237,8 @@ export default function BudgetForm({ initialData, dataCustomer }: { initialData?
 
                 <Button
                     onClick={handleSubmit}
-                    className="w-full bg-green-600 hover:bg-green-700 text-white"
+                    disabled={isSubmitting}
+                    className={`w-full ${isSubmitting ? 'bg-gray-400 cursor-not-allowed' : 'bg-green-600 hover:bg-green-700'} text-white`}
                 >
                     Salvar
                 </Button>
