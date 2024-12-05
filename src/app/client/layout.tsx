@@ -1,5 +1,3 @@
-import type { Metadata } from "next";
-
 import localFont from "next/font/local";
 import "../globals.css";
 import MainNavBar from "./_components/main-nav-bar";
@@ -15,11 +13,6 @@ const geistMono = localFont({
     weight: "100 900",
 });
 
-export const metadata: Metadata = {
-    title: "PlanejaPDF",
-    description: "Planeje seus PDFs com facilidade",
-};
-
 export default function RootLayout({
     children,
 }: Readonly<{
@@ -31,7 +24,7 @@ export default function RootLayout({
                 className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0a192f] text-white min-h-screen`}
             >
                 <div className="flex flex-col min-h-screen">
-                    <header className="bg-[#112240] py-4 px-6 shadow-md">
+                    <header className="bg-[#112240] py-4 px-6 shadow-md flex justify-center">
                         <MainNavBar />
                     </header>
                     <main className="flex-grow container mx-auto px-4 py-8">

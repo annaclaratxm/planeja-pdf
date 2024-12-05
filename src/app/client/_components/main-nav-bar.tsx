@@ -50,14 +50,14 @@ export default function MainNavBar() {
 
     return (
         <header className="sticky top-0 z-50 w-full border-b bg-[#112240] shadow-sm">
-            <nav className="container flex h-16 items-center justify-between">
+            <nav className="container flex h-16 items-center justify-between px-6">
                 <Link href="/client" className="flex items-center space-x-2">
                     <FileText className="h-6 w-6" />
                     <span className="text-xl font-bold">PlanejaPDF</span>
                 </Link>
 
                 {/* Desktop Navigation */}
-                <div className="hidden md:flex md:items-center md:space-x-6">
+                <div className="hidden md:flex md:items-center md:space-x-6 mx-auto">
                     {routes.map((route) => (
                         <Link
                             key={route.href}
@@ -124,4 +124,3 @@ export default function MainNavBar() {
         </header>
     )
 }
-
