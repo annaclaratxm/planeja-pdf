@@ -131,10 +131,10 @@ export default function BudgetPDF({ data }: BudgetPDFProps) {
           <footer className="print:fixed print:bottom-0 print:left-0 print:right-0 p-8 print:p-6 text-center text-sm bg-white">
             <p>{footer.address}</p>
             <p>CNPJ: {footer.cnpj}</p>
-            {/* <div className="print:hidden mt-2 text-xs text-gray-500">
+            <div className="print:hidden mt-2 text-xs text-gray-500">
               Página <span className="page-number"></span> de{' '}
               <span className="page-count"></span>
-            </div> */}
+            </div>
           </footer>
         </div>
       </div>
