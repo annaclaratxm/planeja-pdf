@@ -1,4 +1,4 @@
 import { ReturnTypeWithoutPromise } from '@/types/return-type-without-promise'
-import { generatePdf } from './actions'
+import { getBudgetDetails } from './actions'
 
-export type Customer = ReturnTypeWithoutPromise<typeof generatePdf>
+export type BudgetDetail = ReturnTypeWithoutPromise<typeof getBudgetDetails>
