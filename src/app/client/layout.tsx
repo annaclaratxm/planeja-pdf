@@ -24,7 +24,7 @@ export default function RootLayout({
                 className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#0a192f] text-white min-h-screen`}
             >
                 <div className="flex flex-col min-h-screen">
-                    <header className="bg-[#112240] py-4 px-6 shadow-md flex justify-center">
+                    <header className="bg-[#112240] py-4 px-6 shadow-md">
                         <MainNavBar />
                     </header>
                     <main className="flex-grow container mx-auto px-4 py-8">

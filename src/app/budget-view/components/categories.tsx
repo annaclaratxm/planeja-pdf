@@ -21,7 +21,7 @@ export default function Categories({ categories }: CategoriesProps) {
         <div key={index} className="border-b pb-4">
           <h2 className="text-xl font-semibold mb-2">{category.name.toUpperCase()}</h2>
           {category.products.map((product, idx) => (
-            <div key={idx} className="flex justify-between">
+            <div key={idx} className="flex flex-col sm:flex-row justify-between">
               <span>• {product.name}</span>
               <span>{new Intl.NumberFormat('pt-BR', { style: 'currency', currency: 'BRL' }).format(product.price)}</span>
             </div>
