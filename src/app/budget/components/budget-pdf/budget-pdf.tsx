@@ -18,7 +18,7 @@ export default function BudgetPDF({ data }: BudgetPDFProps) {
   useEffect(() => {
     if (contentRef.current) {
       const content = contentRef.current
-      const pages = Math.ceil(content.scrollHeight / 1123) // A4 height in pixels at 96 DPI
+      const pages = Math.ceil((content.scrollHeight + 50) / (1123 + 96)) // A4 height in pixels at 96 DPI, adding a buffer to avoid extra blank page
       content.style.setProperty('--page-count', String(pages))
     }
   }, [data])
@@ -35,7 +35,7 @@ export default function BudgetPDF({ data }: BudgetPDFProps) {
       >
         <div className="flex flex-col min-h-[297mm] text-black">
           {/* Fixed Header */}
-          <header className="print:fixed print:top-0 print:left-0 print:right-0 p-8 print:p-6 bg-white">
+          <header className="print:fixed print:top-0 print:left-0 print:right-0 p-8 print:p-6  bg-white print:bg-transparent">
             <div className="flex flex-col items-center gap-4">
               {header.imageUrl && (
                 <Image
@@ -51,7 +51,7 @@ export default function BudgetPDF({ data }: BudgetPDFProps) {
           </header>
 
           {/* Content with top margin for fixed header */}
-          <main className="p-8 print:p-6 print:mt-[150px] print:mb-[100px]">
+          <main className="p-8 print:p-15 print:mt-[150px] print:mb-[100px]">
             {/* Customer Info */}
             <div className="grid grid-cols-2 gap-4 mb-8 border-b pb-4">
               <div>
@@ -128,12 +128,11 @@ export default function BudgetPDF({ data }: BudgetPDFProps) {
           </main>
 
           {/* Fixed Footer */}
-          <footer className="print:fixed print:bottom-0 print:left-0 print:right-0 p-8 print:p-6 text-center text-sm bg-white">
+          <footer className="print:fixed print:bottom-0 print:left-0 print:right-0 p-8 print:p-6 text-center text-sm bg-white print:bg-transparent">
             <p>{footer.address}</p>
             <p>CNPJ: {footer.cnpj}</p>
             <div className="print:hidden mt-2 text-xs text-gray-500">
-              Página <span className="page-number"></span> de{' '}
-              <span className="page-count"></span>
+              Página <span className="page-number"></span> de <span className="page-count"></span>
             </div>
           </footer>
         </div>
