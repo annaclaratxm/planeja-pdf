@@ -5,6 +5,9 @@ import { getUserName } from "@/services/api/user/actions";
 import { ArrowDown, ArrowUp, FileText, Percent, Users } from 'lucide-react';
 import { useCallback, useEffect, useState } from "react";
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+import { SpeedInsights } from "@vercel/speed-insights/next"
+
 export default function DashboardPage() {
   const [userName, setUserName] = useState("");
 
