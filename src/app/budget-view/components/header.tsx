@@ -18,11 +18,11 @@ export default function Header({ logo, year }: HeaderProps) {
                         alt="Preview"
                         width={120}
                         height={120}
-                        className="mx-auto"
+                        className="mx-auto w-full max-w-xs sm:max-w-sm md:max-w-md lg:max-w-lg"
                     />
                 </div>
             )}
-            <h1 className="text-xl font-bold text-gray-800">ORÇAMENTO / {year}</h1> {/* Reduzi o tamanho do texto */}
+            <h1 className="text-xl font-bold text-gray-800 sm:text-2xl md:text-3xl lg:text-4xl">ORÇAMENTO / {year}</h1>
         </div>
     );
 }

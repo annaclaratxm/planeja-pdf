@@ -1,6 +1,7 @@
+'use client'
+
 import React, { ReactNode, useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
-import '../[id]/pdf.css';
 
 interface PdfLayoutProps {
     children: ReactNode;
@@ -16,11 +17,11 @@ const PdfLayout: React.FC<PdfLayoutProps> = ({ children, header, footer }) => {
         const paginateContent = () => {
             if (typeof window === 'undefined') return;
 
-            const pageHeight = 297 * 3.78;  // A4 height in pixels
-            const pageWidth = 210 * 3.78;   // A4 width in pixels
-            const padding = 40;             // Padding in pixels
-            const headerHeight = header ? 100 : 0;  // Conditional header height
-            const footerHeight = footer ? 100 : 0; // Conditional footer height
+            const pageHeight = window.innerHeight;
+            const pageWidth = window.innerWidth;
+            const padding = Math.min(40, pageWidth * 0.05);
+            const headerHeight = header ? Math.min(100, pageHeight * 0.1) : 0;
+            const footerHeight = footer ? Math.min(100, pageHeight * 0.1) : 0;
 
             const newPages: ReactNode[] = [];
             let currentPage: ReactNode[] = [];
@@ -35,11 +36,10 @@ const PdfLayout: React.FC<PdfLayoutProps> = ({ children, header, footer }) => {
             ) => (
                 <div
                     key={`page-${pageNumber}`}
-                    className="a4-page"
-                    style={{ width: `${pageWidth}px`, height: `${pageHeight}px`, padding: `${padding}px`, boxSizing: 'border-box', position: 'relative', display: 'flex', flexDirection: 'column' }}
+                    className="pdf-page w-full min-h-screen p-4 sm:p-8 box-border relative flex flex-col"
                 >
                     {header && <HeaderComponent>{header}</HeaderComponent>}
-                    <div className="pdf-content" style={{ flex: 1, overflow: 'hidden', width: '100%' }}>
+                    <div className="pdf-content flex-1 overflow-hidden w-full">
                         {pageContent}
                     </div>
                     {footer && <FooterComponent pageNumber={pageNumber} totalPages={totalPages}>{footer}</FooterComponent>}
@@ -50,7 +50,7 @@ const PdfLayout: React.FC<PdfLayoutProps> = ({ children, header, footer }) => {
                 const tempContainer = document.createElement('div');
                 tempContainer.style.position = 'absolute';
                 tempContainer.style.visibility = 'hidden';
-                tempContainer.style.width = `${pageWidth - (padding * 2)}px`;
+                tempContainer.style.width = '100%';
 
                 if (React.isValidElement(child)) {
                     const root = createRoot(tempContainer);
@@ -96,8 +96,16 @@ const PdfLayout: React.FC<PdfLayoutProps> = ({ children, header, footer }) => {
             setIsReady(true);
         };
 
-        const timer = setTimeout(paginateContent, 200);
-        return () => clearTimeout(timer);
+        const handleResize = () => {
+            setIsReady(false);
+            const timer = setTimeout(paginateContent, 200);
+            return () => clearTimeout(timer);
+        };
+
+        window.addEventListener('resize', handleResize);
+        handleResize();
+
+        return () => window.removeEventListener('resize', handleResize);
     }, [children, header, footer]);
 
     if (!isReady) {
@@ -112,23 +120,23 @@ const PdfLayout: React.FC<PdfLayoutProps> = ({ children, header, footer }) => {
 };
 
 const HeaderComponent: React.FC<{ children: ReactNode }> = ({ children }) => (
-    <div className="pdf-header" style={{ width: '100%', marginBottom: '40px', zIndex: 10 }}>
+    <div className="pdf-header w-full mb-4 sm:mb-8 z-10">
         {children}
     </div>
 );
 
 const FooterComponent: React.FC<{ pageNumber: number, totalPages: number, children: ReactNode }> = ({ pageNumber, totalPages, children }) => (
-    <div className="pdf-footer" style={{ width: '100%', marginTop: '40px', zIndex: 10 }}>
+    <div className="pdf-footer w-full mt-4 sm:mt-8 z-10">
         {children}
-        <div className="pdf-page-number" style={{ textAlign: 'right', marginTop: '10px' }}>
+        <div className="pdf-page-number text-right mt-2 sm:mt-4">
             Página {pageNumber + 1} de {totalPages + 1}
         </div>
     </div>
 );
 
 const LoadingView: React.FC<{ header?: ReactNode, footer?: ReactNode, children: ReactNode }> = ({ header, footer, children }) => (
-    <div className="flex flex-col items-center justify-center min-h-screen w-full p-8 bg-white text-black">
-        <main className="bg-white w-full max-w-4xl p-8">
+    <div className="flex flex-col items-center justify-center min-h-screen w-full p-4 sm:p-8 bg-white text-black">
+        <main className="bg-white w-full max-w-4xl p-4 sm:p-8">
             {header && <div className="pdf-header">{header}</div>}
             <div>{children}</div>
             {footer && <div className="pdf-footer">{footer}</div>}

@@ -19,7 +19,7 @@ export default function BudgetDetails({ budget }: BudgetDetailsProps) {
     }
 
     return (
-        <div className="p-6 space-y-6">
+        <div className="p-6 space-y-6 max-w-4xl mx-auto">
             <CustomerInfo name={budget.customer.name} phone={budget.customer.phone} />
             <Categories categories={budget.categories} />
             <div className="text-right font-bold text-lg">
@@ -41,5 +41,3 @@ export default function BudgetDetails({ budget }: BudgetDetailsProps) {
         </div>
     )
 }
-
-
