@@ -5,12 +5,10 @@ interface FooterProps {
 }
 
 export default function Footer({ address, cnpj }: FooterProps) {
-  {
-    return (
-      <div className="bg-gray-100 p-2 text-center text-xs">
-        <p className="mb-1">{address}</p>
-        <p>CNPJ: {cnpj}</p>
-      </div>
-    )
-  }
+  return (
+    <div className="bg-gray-100 p-2 text-center text-xs sm:text-sm md:text-base lg:text-lg xl:text-xl">
+      <p className="mb-1">{address}</p>
+      <p>CNPJ: {cnpj}</p>
+    </div>
+  )
 }
