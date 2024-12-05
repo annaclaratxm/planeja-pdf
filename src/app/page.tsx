@@ -220,7 +220,7 @@ export default function LandingPage() {
         </div>
 
         <motion.section
-          className="py-24 bg-[url('/path-to-your-image.jpg')] bg-cover bg-center relative"
+          className="py-24 bg-[url('/favicon.ico')] bg-cover bg-center relative"
           initial="initial"
           animate="animate"
           variants={{
