@@ -1,11 +1,11 @@
-import { getBudgetDetails, getSettingByBudgetId } from '@/services/api/pdf-generator/actions'
-import { BudgetDetail } from '@/services/api/pdf-generator/types'
-import { GetFileFromR2 } from '@/services/bucket/cloudflare'
-import { cache } from 'react'
+import { getBudgetDetails, getSettingByBudgetId } from '@/services/api/pdf-generator/actions';
+import { BudgetDetail } from "@/services/api/pdf-generator/types";
+import { GetFileFromR2 } from '@/services/bucket/cloudflare';
+import { cache } from 'react';
 
 export type LayoutData = {
     header: {
-        imageUrl: File | null
+        imageUrl: string | null
     }
     budget: BudgetDetail
     footer: {
@@ -13,17 +13,17 @@ export type LayoutData = {
         address: string
     }
 }
-
 export const getLayoutData = cache(async (id: string): Promise<LayoutData> => {
     const setting = await getSettingByBudgetId(id);
     const fetchedLogo = setting?.logo ? await GetFileFromR2(setting.logo) : null;
     const budget = await getBudgetDetails(id);
     const address = `${setting?.street}, ${setting?.number}, ${setting?.neighborhood} - ${setting?.city} - ${setting?.state.toUpperCase()} / CEP ${setting?.zipCode}` || '';
     const cnpj = setting?.cnpj || '';
+    const convertedLogo = fetchedLogo ? URL.createObjectURL(fetchedLogo) : null;
 
     return {
         header: {
-            imageUrl: fetchedLogo ? fetchedLogo : null
+            imageUrl: convertedLogo
         },
         budget,
         footer: {

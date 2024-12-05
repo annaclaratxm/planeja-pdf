@@ -47,7 +47,7 @@ export default function BudgetDataTable({ budgets }: { budgets: Budget[] }) {
     }
 
     const handlePrint = (id: string) => {
-        router.push(`/budget-view/${id}`)
+        window.open(`/budget/${id}`, '_blank')
     }
 
     const handleDeleteBudget = async (id: string) => {
