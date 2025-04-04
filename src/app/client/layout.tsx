@@ -1,5 +1,3 @@
-import type { Metadata } from "next";
-
 import localFont from "next/font/local";
 import "../globals.css";
 import MainNavBar from "./_components/main-nav-bar";
@@ -14,11 +12,6 @@ const geistMono = localFont({
     variable: "--font-geist-mono",
     weight: "100 900",
 });
-
-export const metadata: Metadata = {
-    title: "PlanejaPDF",
-    description: "Planeje seus PDFs com facilidade",
-};
 
 export default function RootLayout({
     children,

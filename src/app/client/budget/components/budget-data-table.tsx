@@ -15,7 +15,6 @@ import { deleteBudgetById, updateStatusBudget } from '@/services/api/budget/acti
 import { Search } from 'lucide-react'
 import { useRouter } from "next/navigation"
 import { useState } from 'react'
-import { BudgetGeneratePdf } from './budget-generate-pdf'
 import { columns } from './columns'
 import { DataTable } from './data-table'
 
@@ -47,6 +46,10 @@ export default function BudgetDataTable({ budgets }: { budgets: Budget[] }) {
         router.push(`/client/budget/${id}`)
     }
 
+    const handlePrint = (id: string) => {
+        window.open(`/budget/${id}`, '_blank')
+    }
+
     const handleDeleteBudget = async (id: string) => {
         await deleteBudgetById(id)
         setShowModal(false)
@@ -69,7 +72,7 @@ export default function BudgetDataTable({ budgets }: { budgets: Budget[] }) {
             setBudgetToDelete(id)
             setShowModal(true)
         },
-        onPrint: BudgetGeneratePdf,
+        onPrint: handlePrint,
         onStatusChange: async (status, id) => {
             await updateStatusBudget(status, id)
             window.location.reload()

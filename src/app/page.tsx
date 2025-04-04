@@ -51,7 +51,7 @@ export default function LandingPage() {
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.5 }}
           >
-            <Link href="/auth" className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-full transition-colors text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
+            <Link href="/auth" className="bg-blue-600 hover:bg-blue-700 px-6 py-3 rounded-full text-lg font-semibold shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300">
               Entrar
             </Link>
           </motion.div>
@@ -220,7 +220,7 @@ export default function LandingPage() {
         </div>
 
         <motion.section
-          className="py-24 bg-[url('/path-to-your-image.jpg')] bg-cover bg-center relative"
+          className="py-24 bg-[url('/favicon.ico')] bg-cover bg-center relative"
           initial="initial"
           animate="animate"
           variants={{

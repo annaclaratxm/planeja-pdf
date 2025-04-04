@@ -49,65 +49,31 @@ export default function MainNavBar() {
     ]
 
     return (
-        <header className="sticky top-0 z-50 w-full border-b bg-[#112240] shadow-sm">
-            <nav className="container flex h-16 items-center justify-between">
-                <Link href="/client" className="flex items-center space-x-2">
-                    <FileText className="h-6 w-6" />
-                    <span className="text-xl font-bold">PlanejaPDF</span>
-                </Link>
+        <div className="flex items-center justify-between">
+            <Link href="/client" className="flex items-center space-x-2">
+                <FileText className="h-6 w-6" />
+                <span className="text-xl font-bold">PlanejaPDF</span>
+            </Link>
 
-                {/* Desktop Navigation */}
-                <div className="hidden md:flex md:items-center md:space-x-6">
-                    {routes.map((route) => (
-                        <Link
-                            key={route.href}
-                            href={route.href}
-                            className={cn(
-                                "flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-[#1d3a6e]",
-                                pathname === route.href ? "bg-[#1d3a6e]" : "transparent"
-                            )}
-                        >
-                            <route.icon className="h-4 w-4" />
-                            <span>{route.name}</span>
-                        </Link>
-                    ))}
-                </div>
+            {/* Desktop Navigation */}
+            <div className="hidden md:flex md:items-center md:space-x-6 mx-auto">
+                {routes.map((route) => (
+                    <Link
+                        key={route.href}
+                        href={route.href}
+                        className={cn(
+                            "flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-[#1d3a6e]",
+                            pathname === route.href ? "bg-[#1d3a6e]" : "transparent"
+                        )}
+                    >
+                        <route.icon className="h-4 w-4" />
+                        <span>{route.name}</span>
+                    </Link>
+                ))}
+            </div>
 
-                {/* Mobile Navigation */}
-                <Sheet open={isOpen} onOpenChange={setIsOpen}>
-                    <SheetTrigger asChild className="md:hidden">
-                        <Button variant="ghost" size="icon" className="text-white">
-                            <Menu className="h-6 w-6" />
-                            <span className="sr-only">Toggle menu</span>
-                        </Button>
-                    </SheetTrigger>
-                    <SheetContent side="left" className="w-[300px] bg-[#112240] p-0">
-                        <SheetHeader className="border-b border-[#1d3a6e] p-6">
-                            <SheetTitle className="flex items-center space-x-2 text-white">
-                                <FileText className="h-6 w-6" />
-                                <span>PlanejaPDF</span>
-                            </SheetTitle>
-                        </SheetHeader>
-                        <div className="flex flex-col space-y-2 p-6">
-                            {routes.map((route) => (
-                                <Link
-                                    key={route.href}
-                                    href={route.href}
-                                    onClick={() => setIsOpen(false)}
-                                    className={cn(
-                                        "flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-[#1d3a6e]",
-                                        pathname === route.href ? "bg-[#1d3a6e]" : "transparent"
-                                    )}
-                                >
-                                    <route.icon className="h-4 w-4" />
-                                    <span>{route.name}</span>
-                                </Link>
-                            ))}
-                        </div>
-                    </SheetContent>
-                </Sheet>
-
-                {/* Sign Out Button */}
+            {/* Sign Out Button for Desktop */}
+            <div className="hidden md:flex">
                 <Button
                     variant="destructive"
                     className="bg-green-500 hover:bg-green-600"
@@ -118,10 +84,55 @@ export default function MainNavBar() {
                     }}
                 >
                     <LogOut className="h-4 w-4 mr-2" />
-                    Sair
+                    <span className="hidden md:inline">Sair</span>
                 </Button>
-            </nav>
-        </header>
+            </div>
+
+            {/* Mobile Navigation */}
+            <Sheet open={isOpen} onOpenChange={setIsOpen}>
+                <SheetTrigger asChild className="md:hidden">
+                    <Button variant="ghost" size="icon" className="text-white">
+                        <Menu className="h-6 w-6" />
+                        <span className="sr-only">Toggle menu</span>
+                    </Button>
+                </SheetTrigger>
+                <SheetContent side="right" className="w-[300px] bg-[#112240] p-0">
+                    <SheetHeader className="border-b border-[#1d3a6e] p-6">
+                        <SheetTitle className="flex items-center space-x-2 text-white">
+                            <FileText className="h-6 w-6" />
+                            <span>PlanejaPDF</span>
+                        </SheetTitle>
+                    </SheetHeader>
+                    <div className="flex flex-col space-y-2 p-6">
+                        {routes.map((route) => (
+                            <Link
+                                key={route.href}
+                                href={route.href}
+                                onClick={() => setIsOpen(false)}
+                                className={cn(
+                                    "flex items-center space-x-2 rounded-md px-3 py-2 text-sm font-medium transition-colors hover:bg-[#1d3a6e]",
+                                    pathname === route.href ? "bg-[#1d3a6e]" : "transparent"
+                                )}
+                            >
+                                <route.icon className="h-4 w-4" />
+                                <span>{route.name}</span>
+                            </Link>
+                        ))}
+                        <Button
+                            variant="destructive"
+                            className="bg-green-500 hover:bg-green-600 mt-4"
+                            onClick={() => {
+                                signOut({
+                                    callbackUrl: "/auth",
+                                })
+                            }}
+                        >
+                            <LogOut className="h-4 w-4 mr-2" />
+                            <span>Sair</span>
+                        </Button>
+                    </div>
+                </SheetContent>
+            </Sheet>
+        </div>
     )
 }
-
