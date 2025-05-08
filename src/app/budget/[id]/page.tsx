@@ -28,6 +28,10 @@ export default function BudgetPage({ params }: PageProps) {
 
             fetchData.then((findedData) => {
                 setData(findedData);
+
+                setTimeout(() => {
+                    window.print();
+                }, 2000);
             });
         }
     }, [id, data]);
@@ -61,5 +65,5 @@ export default function BudgetPage({ params }: PageProps) {
         );
     }
 
-    return <BudgetPDF data={data} />
+    return <BudgetPDF data={data} />;
 }

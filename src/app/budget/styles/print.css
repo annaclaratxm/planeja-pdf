@@ -7,13 +7,64 @@
   body {
     margin: 0;
     padding: 0;
+    padding-top: 18px;
+    counter-reset: page;
   }
 
   .page-number::before {
+    counter-increment: page;
     content: counter(page);
   }
 
   .page-count::before {
     content: var(--page-count);
+  }
+
+  .print\\:fixed {
+    position: fixed !important;
+  }
+
+  .print\\:top-0 {
+    top: 0 !important;
+  }
+
+  .print\\:left-0 {
+    left: 0 !important;
+  }
+
+  .print\\:right-0 {
+    right: 0 !important;
+  }
+
+  .print\\:bottom-0 {
+    bottom: 0 !important;
+  }
+
+  .print\\:p-0 {
+    padding: 0 !important;
+  }
+
+  .print\\:p-6 {
+    padding: 1.5rem !important;
+  }
+
+  .print\\:p-15 {
+    padding: 3.75rem !important;
+  }
+
+  .print\:mt-\[150px\] {
+    margin-top: 150px !important;
+  }
+
+  .print\\:mb-\[100px\] {
+    margin-bottom: 100px !important;
+  }
+
+  .print\\:shadow-none {
+    box-shadow: none !important;
+  }
+
+  .print\\:bg-transparent {
+    background-color: transparent !important;
   }
 }
