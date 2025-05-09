@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 
 import { Toaster } from "@/components/ui/toaster";
 import { ThemeProvider } from "./_components/theme-provider";
+import { Providers } from "./_components/session-provider";
 import ChatWrapper from "./_components/ChatWrapper";  // ← nosso wrapper
 import "./globals.css";
 
@@ -61,7 +62,9 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
+          <Providers>
           {children}
+          </Providers>
           <Toaster />
         </ThemeProvider>
       </body>

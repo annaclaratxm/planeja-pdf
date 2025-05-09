@@ -1,7 +1,11 @@
+"use client";
+
 import dynamic from "next/dynamic";
 import localFont from "next/font/local";
 import "../globals.css";
 import MainNavBar from "./_components/main-nav-bar";
+import { useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 // Fonte Geist Sans
 const geistSans = localFont({
@@ -27,6 +31,17 @@ export default function ClientLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const { data: session } = useSession();
+
+  useEffect(() => {
+    if (session?.user?.id) {
+      // Salva o userId no localStorage
+      localStorage.setItem("userId", session.user.id);
+    } else {
+      console.log("User ID não encontrado na sessão.");
+    }
+  }, [session]);
+
   return (
     <html lang="pt-BR">
       <body
