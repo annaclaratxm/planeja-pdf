@@ -1,5 +1,6 @@
 "use client";
-import { useState } from "react";
+
+import { useState, useEffect, useRef } from "react";
 import { Send, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,32 +12,113 @@ interface ChatWindowProps {
   onClose: () => void;
 }
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
+
 export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
   const [messages, setMessages] = useState<ChatMessageData[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  // obtém user_id do localStorage
+  const [userId, setUserId] = useState<string>('');
+
+  useEffect(() => {
+    const id = localStorage.getItem('user_id');
+    if (id) setUserId(id);
+  }, []);
+
+
+  // ao abrir, carrega histórico
+  useEffect(() => {
+    if (!isOpen || !userId) return;
+  
+    fetch(`${API_URL}/chat/history?user_id=${userId}`)
+      .then(res => res.json())
+      .then((history: { prompt: string; response: string; created_at: string }[]) => {
+        console.log("Histórico recebido da API:", history);
+        const formattedMessages: ChatMessageData[] = history.flatMap((h, index) => [
+          {
+            id: `${index}-user`,
+            role: "user",
+            content: h.prompt
+          },
+          {
+            id: `${index}-assistant`,
+            role: "assistant",
+            content: h.response
+          }
+        ]);
+        setMessages(formattedMessages);
+        // scroll para o final
+        setTimeout(() => scrollRef.current?.scrollTo(0, scrollRef.current.scrollHeight), 100);
+      })
+      .catch(err => console.error('Erro ao obter histórico:', err));
+  }, [isOpen, userId]);
+
+  // scroll automático ao adicionar mensagem
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTo(0, scrollRef.current.scrollHeight);
+    }
+  }, [messages]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!input.trim()) return;
-    
+    if (!input.trim() || !userId) return;
+
     const userMessage: ChatMessageData = {
       id: Date.now().toString(),
       role: "user",
-      content: input
+      content: input.trim()
     };
-    
+
     setMessages(prev => [...prev, userMessage]);
     setInput("");
     setIsLoading(true);
-    
-    setTimeout(() => setIsLoading(false), 500);
+
+    try {
+      const res = await fetch(`${API_URL}/chat/ask`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: userMessage.content, user_id: userId })
+      });
+
+      if (!res.ok) {
+        console.error('Erro na API:', await res.text());
+        return;
+      }
+
+      const data = await res.json();
+      console.log('Resposta da IA:', data);
+      const botMessage: ChatMessageData = {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: data.response   
+      };
+      setMessages(prev => [...prev, botMessage]);
+
+       // Salvar a troca (pergunta/resposta) no histórico do backend
+      await fetch(`${API_URL}/chat/history`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          user_id: userId,
+          prompt: userMessage.content,
+          response: data.response
+        })
+      });
+    } catch (err) {
+      console.error('Erro ao chamar /chat/ask:', err);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-20 right-4 w-80 sm:w-96 h-[500px] bg-background rounded-lg shadow-xl flex flex-col overflow-hidden border animate-in slide-in-from-bottom-5 duration-300">
+    <div className="fixed bottom-20 right-4 w-80 sm:w-96 h-[500px] bg-background rounded-lg shadow-xl flex flex-col overflow-hidden animate-in slide-in-from-bottom-5 duration-300">
       <div className="p-3 border-b bg-primary text-primary-foreground flex justify-between items-center">
         <h3 className="font-medium">Assistente IA</h3>
         <Button 
@@ -50,15 +132,15 @@ export function ChatWindow({ isOpen, onClose }: ChatWindowProps) {
         </Button>
       </div>
 
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-4">
         {messages.length === 0 ? (
           <div className="flex h-full items-center justify-center text-center text-muted-foreground p-4">
             <p>Olá! Como posso ajudar você hoje?</p>
           </div>
         ) : (
-          messages.map((message) => (
+          messages.map((message, idx) => (
             <ChatMessage 
-              key={message.id} 
+              key={`${message.id}-${idx}`} 
               role={message.role} 
               content={message.content} 
             />
