@@ -8,24 +8,21 @@ import MainNavBar from "./_components/main-nav-bar";
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 
-// Fonte Geist Sans
 const geistSans = localFont({
   src: "../fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
 });
 
-// Fonte Geist Mono
 const geistMono = localFont({
   src: "../fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
 });
 
-// ChatWrapper é um Client Component importado dinamicamente
 const ChatWrapper = dynamic(
   () => import("../_components/ChatWrapper"),
-  { ssr: false } // só renderiza no cliente
+  { ssr: false } 
 );
 
 export default function ClientLayout({
@@ -59,7 +56,7 @@ export default function ClientLayout({
         </footer>
       </div>
 
-      {/* Chat disponível em todas as rotas /client/* */}
+      {}
       <ChatWrapper />
     </>
   );
