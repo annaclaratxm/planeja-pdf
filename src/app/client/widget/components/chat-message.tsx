@@ -1,31 +1,36 @@
 "use client";
 import { Bot, User } from "lucide-react";
 import { ChatMessageProps } from "./chat-types";
+import Markdown from 'react-markdown';
+import 'github-markdown-css/github-markdown-dark.css'; 
 
 export const ChatMessage = ({ role, content }: ChatMessageProps) => {
+  const isAssistant = role === "assistant";
+  const isTyping = content === "Digitando...";
+
   return (
-    <div className={`flex gap-3 ${role === "user" ? "justify-end" : "justify-start"}`}>
-      {role === "assistant" && (
-        <div className="h-8 w-8 rounded-full bg-emerald-100 flex items-center justify-center">
-          <Bot className="h-4 w-4 text-emerald-600" />
+    <div className={`flex gap-3 ${!isAssistant ? "justify-end" : "justify-start"}`}>
+      {isAssistant && (
+        <div className="h-8 w-8 rounded-full bg-emerald-500/20 flex items-center justify-center flex-shrink-0">
+          <Bot className="h-4 w-4 text-emerald-500" />
         </div>
       )}
 
       <div
-        className={`max-w-[80%] rounded-lg p-3 ${
-          role === "user"
-            ? "bg-primary text-primary-foreground"
-            : "bg-muted text-muted-foreground"
-        }`}
+        className={`max-w-[80%] rounded-lg p-3 text-white ${isAssistant
+            ? "bg-gray-700"
+            : "bg-emerald-600" 
+          } ${isTyping ? 'animate-pulse' : ''}`}
       >
-        <p className="text-sm">
-          {content}
-        </p>
+        {/* Usando react-markdown para renderizar a resposta */}
+        <div className={`markdown-body ${isAssistant ? '' : 'text-white'}`} style={{ backgroundColor: 'transparent', fontSize: '0.875rem' }}>
+          <Markdown>{content}</Markdown>
+        </div>
       </div>
 
-      {role === "user" && (
-        <div className="h-8 w-8 rounded-full bg-primary/20 flex items-center justify-center">
-          <User className="h-4 w-4 text-primary" />
+      {!isAssistant && (
+        <div className="h-8 w-8 rounded-full bg-gray-600 flex items-center justify-center flex-shrink-0">
+          <User className="h-4 w-4 text-white" />
         </div>
       )}
     </div>
