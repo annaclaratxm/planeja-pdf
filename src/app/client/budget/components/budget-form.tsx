@@ -40,6 +40,13 @@ export default function BudgetForm({ initialData, dataCustomer }: { initialData?
         }))
     }, [])
 
+    const removeCategory = useCallback((categoryIndex: number) => {
+        setBudget(prev => ({
+            ...prev,
+            categories: prev.categories.filter((_, idx) => idx !== categoryIndex)
+        }))
+    }, [])
+
     const addProduct = useCallback((categoryIndex: number) => {
         setBudget(prev => ({
             ...prev,
@@ -135,9 +142,8 @@ export default function BudgetForm({ initialData, dataCustomer }: { initialData?
                 </div>
 
                 {budget.categories.map((category, categoryIndex) => (
-                    <div key={categoryIndex} className="space-y-4">
-                        <div className="space-y-2">
-                            <label className="text-sm font-medium">Categoria</label>
+                    <div key={categoryIndex} className="space-y-4 border p-4 rounded-lg bg-[#132236]">
+                        <div className="flex items-center gap-2">
                             <Input
                                 value={category.name}
                                 onChange={e => setBudget(prev => ({
@@ -146,9 +152,18 @@ export default function BudgetForm({ initialData, dataCustomer }: { initialData?
                                         idx === categoryIndex ? { ...c, name: e.target.value } : c
                                     )
                                 }))}
-                                className="bg-[#132236] border-[#003380] text-white"
+                                className="bg-[#132236] border-[#003380] text-white flex-1"
                                 placeholder="Nome da categoria"
                             />
+                            <Button
+                                variant="ghost"
+                                size="icon"
+                                onClick={() => removeCategory(categoryIndex)}
+                                className="text-red-500 hover:text-red-600"
+                                title="Excluir categoria"
+                            >
+                                <Trash2 className="h-5 w-5" />
+                            </Button>
                         </div>
 
                         <div className="space-y-4">

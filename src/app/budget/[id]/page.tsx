@@ -21,16 +21,24 @@ export default function BudgetPage({ params }: PageProps) {
         });
     }, [params]);
 
-
     useEffect(() => {
         if (id && !data) {
             const fetchData = getLayoutData(id);
-
             fetchData.then((findedData) => {
                 setData(findedData);
             });
         }
     }, [id, data]);
+
+    // ⬇️ Dispara a impressão após carregamento dos dados
+    useEffect(() => {
+        if (data) {
+            const timeout = setTimeout(() => {
+                window.print();
+            }, 500); // espera breve para garantir renderização
+            return () => clearTimeout(timeout);
+        }
+    }, [data]);
 
     if (!id || !data) {
         return (
