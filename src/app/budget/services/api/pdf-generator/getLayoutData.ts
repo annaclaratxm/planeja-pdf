@@ -14,7 +14,14 @@ export type LayoutData = {
     }
 }
 export const getLayoutData = cache(async (id: string): Promise<LayoutData> => {
-    const setting = await getSettingByBudgetId(id);
+    let setting;
+    try {
+        setting = await getSettingByBudgetId(id);
+    } catch (error) {
+        console.error('Error fetching setting:', error);
+        setting = {}; // Set an empty object if setting fetch fails
+    }
+
     const fetchedLogo = setting?.logo ? await GetFileFromR2(setting.logo) : null;
     const budget = await getBudgetDetails(id);
     const address = `${setting?.street}, ${setting?.number}, ${setting?.neighborhood} - ${setting?.city} - ${setting?.state.toUpperCase()} / CEP ${setting?.zipCode}` || '';
@@ -30,7 +37,6 @@ export const getLayoutData = cache(async (id: string): Promise<LayoutData> => {
             cnpj,
             address
         }
-
-    }
-})
+    };
+});
 

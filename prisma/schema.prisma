@@ -48,7 +48,7 @@ model User {
   budgets                  Budget[]
   customers                Customer[]
   sessions                 Session[]
-  setting                  Settings?
+  settings                 Settings?
   subscriptions            Subscription[]
 }
 

@@ -28,13 +28,12 @@ export async function getBudgetDetails(budgetId: string) {
                         }
                     }
                 }
-
             },
             user: {
                 select: {
                     email: true,
                     name: true,
-                    setting: {
+                    settings: {
                         select: {
                             companyName: true,
                             phone: true,
@@ -48,10 +47,8 @@ export async function getBudgetDetails(budgetId: string) {
                 }
             },
             createdAt: true,
-
         }
     });
-
     return budget;
 }
 
@@ -63,7 +60,7 @@ export async function getSettingByBudgetId(budgetId: string) {
         select: {
             user: {
                 select: {
-                    setting: {
+                    settings: {
                         select: {
                             city: true,
                             cnpj: true,
@@ -80,8 +77,8 @@ export async function getSettingByBudgetId(budgetId: string) {
                 }
             }
         }
-    }).then((budget) => budget?.user?.setting?.[0]);
+    });
 
-    return budget;
+    return budget?.user?.settings;
 }
 

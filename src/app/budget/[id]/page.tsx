@@ -24,7 +24,9 @@ export default function BudgetPage({ params }: PageProps) {
     useEffect(() => {
         if (id && !data) {
             const fetchData = getLayoutData(id);
+
             fetchData.then((findedData) => {
+
                 setData(findedData);
             });
         }
@@ -34,7 +36,10 @@ export default function BudgetPage({ params }: PageProps) {
     useEffect(() => {
         if (data) {
             const timeout = setTimeout(() => {
+                console.log("budget here: ", data);
+
                 window.print();
+
             }, 500); // espera breve para garantir renderização
             return () => clearTimeout(timeout);
         }
