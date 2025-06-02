@@ -1,8 +1,8 @@
 "use client";
+import 'github-markdown-css/github-markdown-dark.css';
 import { Bot, User } from "lucide-react";
-import { ChatMessageProps } from "./chat-types";
 import Markdown from 'react-markdown';
-import 'github-markdown-css/github-markdown-dark.css'; 
+import { ChatMessageProps } from "./chat-types";
 
 export const ChatMessage = ({ role, content }: ChatMessageProps) => {
   const isAssistant = role === "assistant";
@@ -18,8 +18,8 @@ export const ChatMessage = ({ role, content }: ChatMessageProps) => {
 
       <div
         className={`max-w-[80%] rounded-lg p-3 text-white ${isAssistant
-            ? "bg-gray-700"
-            : "bg-emerald-600" 
+          ? "bg-gray-700"
+          : "bg-emerald-600"
           } ${isTyping ? 'animate-pulse' : ''}`}
       >
         {/* Usando react-markdown para renderizar a resposta */}

@@ -3,9 +3,9 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 
 import { Toaster } from "@/components/ui/toaster";
-import { ThemeProvider } from "./_components/theme-provider";
 import { Providers } from "./_components/session-provider";
-import ChatWrapper from "./_components/ChatWrapper";  // ← nosso wrapper
+import { ThemeProvider } from "./_components/theme-provider";
+// import ChatWrapper from "./_components/ChatWrapper";  // ← nosso wrapper
 import "./globals.css";
 
 const geistSans = localFont({

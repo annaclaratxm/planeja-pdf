@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { ChatButton } from "./chat-button";
-import { ChatWindow } from "./chat-window";
 import { ChatSidebar } from "./chat-sidebar";
 import { ChatMessageData, SessionData } from "./chat-types";
+import { ChatWindow } from "./chat-window";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://127.0.0.1:8000";
 
@@ -122,7 +122,7 @@ export function AIChatWidget() {
 				if (!createRes.ok) throw new Error("Falha ao criar nova sessão");
 				const sessionData = await createRes.json();
 				sessionIdToUse = sessionData.session_id;
-				setCurrentSessionId(sessionIdToUse); 
+				setCurrentSessionId(sessionIdToUse);
 				console.log("Nova sessão criada:", sessionIdToUse);
 			}
 
@@ -179,12 +179,10 @@ export function AIChatWidget() {
 						isLoading={isLoading}
 					/>
 					<ChatWindow
-						isOpen={isOpen}
 						onClose={() => setIsOpen(false)}
 						messages={messages}
 						onSendMessage={handleSendMessage}
 						isLoading={isLoading}
-						currentSessionId={currentSessionId}
 					/>
 				</div>
 			)}

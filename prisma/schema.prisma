@@ -21,8 +21,7 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
-
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   @@unique([provider, providerAccountId])
 }
@@ -36,23 +35,21 @@ model Session {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  name          String?
-  email         String?   @unique
-  emailVerified DateTime?
-  image         String?
-
+  id                       String         @id @default(cuid())
+  name                     String?
+  email                    String?        @unique
+  emailVerified            DateTime?
+  image                    String?
   stripeCustomerId         String?
   stripeSubscriptionId     String?
   stripeSubscriptionStatus String?
   stripePriceId            String?
+  accounts                 Account[]
+  budgets                  Budget[]
+  customers                Customer[]
+  sessions                 Session[]
+  setting                  Settings?
   subscriptions            Subscription[]
-
-  accounts  Account[]
-  sessions  Session[]
-  customers Customer[]
-  budgets   Budget[]
-  setting   Settings[]
 }
 
 model VerificationToken {
@@ -64,8 +61,8 @@ model VerificationToken {
 }
 
 model Settings {
-  id                 String  @id @default(cuid())
-  userId             String  @unique
+  id                 String   @id @default(cuid())
+  userId             String   @unique
   companyName        String
   cnpj               String
   street             String
@@ -73,18 +70,17 @@ model Settings {
   zipCode            String
   state              String
   city               String
-  neighborhood       String?
   phone              String
   responsiblePerson  String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
   logo               String?
-  paymentMethod      String?
-  observation        String?
-  deliveryTimeDays   Int?
   budgetValidityDays Int?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  deliveryTimeDays   Int?
+  observation        String?
+  paymentMethod      String?
+  neighborhood       String?
+  user               User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Customer {
@@ -92,14 +88,13 @@ model Customer {
   name      String
   phone     String
   email     String?
-  cpf       String?
-  cnpj      String?
-  address   String?
   birthdate DateTime?
   userId    String
-
-  user   User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-  budget Budget[]
+  address   String?
+  cnpj      String?
+  cpf       String?
+  budget    Budget[]
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Budget {
@@ -108,22 +103,22 @@ model Budget {
   status       StatusBudget
   customerId   String?
   userId       String
+  createdAt    DateTime     @default(now())
+  updatedAt    DateTime     @updatedAt
   shippingDate DateTime?
   validateDate DateTime?
   total        Float
-  categories   Category[]
-  createdAt    DateTime     @default(now())
-  updatedAt    DateTime     @updatedAt
   customer     Customer?    @relation(fields: [customerId], references: [id], onDelete: Cascade)
   user         User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  categories   Category[]
 }
 
 model Category {
   id       String    @id @default(cuid())
   name     String
   budgetId String
-  products Product[]
   Budget   Budget    @relation(fields: [budgetId], references: [id], onDelete: Cascade)
+  products Product[]
 }
 
 model Product {
@@ -132,13 +127,6 @@ model Product {
   price      Float
   categoryId String
   Category   Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
-}
-
-enum StatusBudget {
-  Pendente
-  Enviado
-  Aceito
-  Negado
 }
 
 model Plan {
@@ -160,9 +148,9 @@ model Subscription {
   startDate            DateTime
   endDate              DateTime?
   cancelAtPeriodEnd    Boolean            @default(false)
-  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
-  plan                 Plan               @relation(fields: [planId], references: [id], onDelete: Cascade)
   payments             Payment[]
+  plan                 Plan               @relation(fields: [planId], references: [id], onDelete: Cascade)
+  user                 User               @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Payment {
@@ -173,6 +161,13 @@ model Payment {
   status          PaymentStatus
   stripePaymentId String?       @unique
   subscription    Subscription  @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+}
+
+enum StatusBudget {
+  Pendente
+  Enviado
+  Aceito
+  Negado
 }
 
 enum Interval {

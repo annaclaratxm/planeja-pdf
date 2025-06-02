@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { PlusCircle, MessageSquareText } from "lucide-react";
+import { MessageSquareText, PlusCircle } from "lucide-react";
 import { SessionData } from "./chat-types";
 
 interface ChatSidebarProps {
@@ -34,15 +34,15 @@ export function ChatSidebar({
                     <p className="text-xs text-gray-400 text-center p-4">Carregando conversas...</p>
                 )}
                 {!isLoading && sessions.length === 0 && (
-                    <p className="text-xs text-gray-400 text-center p-4">Clique em "Nova Conversa" para começar.</p>
+                    <p className="text-xs text-gray-400 text-center p-4">Clique em &quot;Nova Conversa&quot; para começar.</p>
                 )}
                 {sessions.map((session) => (
                     <Button
                         key={session.id}
                         variant={session.id === currentSessionId ? "secondary" : "ghost"}
                         className={`w-full justify-start text-left h-auto py-2 px-3 whitespace-normal text-white ${session.id === currentSessionId
-                                ? 'bg-gray-700/60 hover:bg-gray-700'
-                                : 'hover:bg-gray-700/40'
+                            ? 'bg-gray-700/60 hover:bg-gray-700'
+                            : 'hover:bg-gray-700/40'
                             }`}
                         onClick={() => onSelectSession(session.id)}
                         disabled={isLoading}

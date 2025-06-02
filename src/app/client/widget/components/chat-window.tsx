@@ -1,29 +1,25 @@
 // src/app/client/widget/components/chat-window.tsx
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { Send, X, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Bot, Send, X } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
 import { ChatMessage } from "./chat-message";
 import { ChatMessageData } from "./chat-types";
 
 interface ChatWindowProps {
-	isOpen: boolean;
 	onClose: () => void;
 	messages: ChatMessageData[];
 	onSendMessage: (prompt: string) => void;
 	isLoading: boolean;
-	currentSessionId: string | null;
 }
 
 export function ChatWindow({
-	isOpen,
 	onClose,
 	messages,
 	onSendMessage,
 	isLoading,
-	currentSessionId,
 }: ChatWindowProps) {
 	const [input, setInput] = useState("");
 	const scrollRef = useRef<HTMLDivElement>(null);

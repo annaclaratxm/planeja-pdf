@@ -93,41 +93,45 @@ export default function BudgetPDF({ data }: BudgetPDFProps) {
             </div>
 
             {/* Payment Terms */}
-            <div className="mb-8">
-              <h3 className="font-bold mb-2">Formas de Pagamento</h3>
-              <p>{budget.user.setting[0].paymentMethod}</p>
-            </div>
+            {budget.user && budget.user.setting && budget.user.setting[0].paymentMethod && (
+              <div className="mb-8">
+                <h3 className="font-bold mb-2">Formas de Pagamento</h3>
+                <p>{budget.user.setting[0].paymentMethod}</p>
+              </div>
+            )}
 
             {/* Observations */}
-            <div className="mb-8">
-              <h3 className="font-bold mb-2">Observações</h3>
-              <p>{budget.user.setting[0].observation}</p>
-            </div>
+            {budget.user && budget.user.setting && budget.user.setting[0].observation && (
+              <div className="mb-8">
+                <h3 className="font-bold mb-2">Observações</h3>
+                <p>{budget.user.setting[0].observation}</p>
+              </div>
+            )}
 
             {/* Deadlines */}
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <strong>Prazo de entrega:</strong>{' '}
-                {budget.user.setting[0].deliveryTimeDays &&
-                  format(new Date(Date.now() + Number(budget.user.setting[0].deliveryTimeDays) * 24 * 60 * 60 * 1000), "dd'/'MM'/'yyyy", { locale: ptBR })}
+            {budget.user && budget.user.setting && budget.user.setting[0].deliveryTimeDays && budget.user.setting[0].budgetValidityDays && (
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <strong>Prazo de entrega:</strong>{' '}
+                  {format(new Date(Date.now() + Number(budget.user.setting[0].deliveryTimeDays) * 24 * 60 * 60 * 1000), "dd'/'MM'/'yyyy", { locale: ptBR })}
+                </div>
+                <div>
+                  <strong>Validade deste orçamento:</strong>{' '}
+                  {format(new Date(Date.now() + Number(budget.user.setting[0].budgetValidityDays) * 24 * 60 * 60 * 1000), "dd'/'MM'/'yyyy", { locale: ptBR })}
+                </div>
               </div>
-              <div>
-                <strong>Validade deste orçamento:</strong>{' '}
-                {budget.user.setting[0].budgetValidityDays &&
-                  format(new Date(Date.now() + Number(budget.user.setting[0].budgetValidityDays) * 24 * 60 * 60 * 1000), "dd'/'MM'/'yyyy", { locale: ptBR })}
-              </div>
-            </div>
+            )}
 
             {/* Company Info */}
-            <div className="mt-8 text-center pt-10">
-              <div className="border-t border-black w-3/4 mx-auto my-4"></div>
-              <p>{budget.user.setting[0].companyName}</p>
-              <p>{budget.user.name}</p>
-              <p>{budget.user.setting[0].phone}</p>
-            </div>
+            {budget.user && budget.user.setting && budget.user.setting[0].companyName && budget.user.name && budget.user.setting[0].phone && (
+              <div className="mt-8 text-center pt-10">
+                <div className="border-t border-black w-3/4 mx-auto my-4"></div>
+                <p>{budget.user.setting[0].companyName}</p>
+                <p>{budget.user.name}</p>
+                <p>{budget.user.setting[0].phone}</p>
+              </div>
+            )}
           </main>
-
-          {/* Fixed Footer */}
           <footer className="print:fixed print:bottom-0 print:left-0 print:right-0 p-8 print:p-6 text-center text-sm bg-white print:bg-transparent">
             <p>{footer.address}</p>
             <p>CNPJ: {footer.cnpj}</p>
