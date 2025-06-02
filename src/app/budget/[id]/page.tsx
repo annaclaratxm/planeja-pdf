@@ -21,20 +21,29 @@ export default function BudgetPage({ params }: PageProps) {
         });
     }, [params]);
 
-
     useEffect(() => {
         if (id && !data) {
             const fetchData = getLayoutData(id);
 
             fetchData.then((findedData) => {
-                setData(findedData);
 
-                setTimeout(() => {
-                    window.print();
-                }, 2000);
+                setData(findedData);
             });
         }
     }, [id, data]);
+
+    // ⬇️ Dispara a impressão após carregamento dos dados
+    useEffect(() => {
+        if (data) {
+            const timeout = setTimeout(() => {
+                console.log("budget here: ", data);
+
+                window.print();
+
+            }, 500); // espera breve para garantir renderização
+            return () => clearTimeout(timeout);
+        }
+    }, [data]);
 
     if (!id || !data) {
         return (
@@ -65,5 +74,5 @@ export default function BudgetPage({ params }: PageProps) {
         );
     }
 
-    return <BudgetPDF data={data} />;
+    return <BudgetPDF data={data} />
 }

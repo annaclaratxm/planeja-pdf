@@ -51,7 +51,7 @@ export default function BudgetPDF({ data }: BudgetPDFProps) {
           </header>
 
           {/* Content with top margin for fixed header */}
-          <main className="p-8 print:p-15 print:mt-[150px] print:mb-[100px]">
+          <main className="p-8 print:p-16 print:mt-[150px] print:mb-[100px]">
             {/* Customer Info */}
             <div className="grid grid-cols-2 gap-4 mb-8 border-b pb-4">
               <div>
@@ -95,35 +95,45 @@ export default function BudgetPDF({ data }: BudgetPDFProps) {
             {/* Payment Terms */}
             <div className="mb-8">
               <h3 className="font-bold mb-2">Formas de Pagamento</h3>
-              <p>{budget.user.setting[0].paymentMethod}</p>
+              <p>{budget.user.settings?.paymentMethod || 'Não especificado'}</p>
             </div>
 
             {/* Observations */}
             <div className="mb-8">
               <h3 className="font-bold mb-2">Observações</h3>
-              <p>{budget.user.setting[0].observation}</p>
+              <p>{budget.user.settings?.observation || 'Sem observações'}</p>
             </div>
 
             {/* Deadlines */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <strong>Prazo de entrega:</strong>{' '}
-                {budget.user.setting[0].deliveryTimeDays &&
-                  format(new Date(Date.now() + Number(budget.user.setting[0].deliveryTimeDays) * 24 * 60 * 60 * 1000), "dd'/'MM'/'yyyy", { locale: ptBR })}
+                {budget.user.settings?.deliveryTimeDays
+                  ? format(
+                    new Date(Date.now() + Number(budget.user.settings.deliveryTimeDays) * 24 * 60 * 60 * 1000),
+                    "dd'/'MM'/'yyyy",
+                    { locale: ptBR }
+                  )
+                  : 'Não especificado'}
               </div>
               <div>
                 <strong>Validade deste orçamento:</strong>{' '}
-                {budget.user.setting[0].budgetValidityDays &&
-                  format(new Date(Date.now() + Number(budget.user.setting[0].budgetValidityDays) * 24 * 60 * 60 * 1000), "dd'/'MM'/'yyyy", { locale: ptBR })}
+                {budget.user.settings?.budgetValidityDays
+                  ? format(
+                    new Date(Date.now() + Number(budget.user.settings.budgetValidityDays) * 24 * 60 * 60 * 1000),
+                    "dd'/'MM'/'yyyy",
+                    { locale: ptBR }
+                  )
+                  : 'Não especificado'}
               </div>
             </div>
 
             {/* Company Info */}
             <div className="mt-8 text-center pt-10">
               <div className="border-t border-black w-3/4 mx-auto my-4"></div>
-              <p>{budget.user.setting[0].companyName}</p>
-              <p>{budget.user.name}</p>
-              <p>{budget.user.setting[0].phone}</p>
+              <p>{budget.user.settings?.companyName ?? 'Nome da empresa não especificado'}</p>
+              <p>{budget.user.name ?? 'Nome do usuário não especificado'}</p>
+              <p>{budget.user.settings?.phone ?? 'Telefone não especificado'}</p>
             </div>
           </main>
 

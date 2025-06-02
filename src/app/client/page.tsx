@@ -8,6 +8,8 @@ import { useCallback, useEffect, useState } from "react";
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { SpeedInsights } from "@vercel/speed-insights/next"
 
+import { AIChatWidget } from "./widget/components/ai-chat-widget";
+
 export default function DashboardPage() {
   const [userName, setUserName] = useState("");
 
@@ -89,6 +91,7 @@ export default function DashboardPage() {
               </div>
             </CardContent>
           </Card>
+          <AIChatWidget />
         </div>
       </main>
     </div>

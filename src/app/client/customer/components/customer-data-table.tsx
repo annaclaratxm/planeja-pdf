@@ -43,18 +43,29 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
   const [isModalOpen, setIsModalOpen] = React.useState(false);
   const [selectedCustomer, setSelectedCustomer] = React.useState<Customer | undefined>(undefined);
 
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = React.useState(false);
+  const [customerToDelete, setCustomerToDelete] = React.useState<Customer | null>(null);
+
   const handleEditCustomer = (customer: Customer) => {
     setSelectedCustomer(customer);
     setIsModalOpen(true);
   };
 
-  const handleDeleteCustomer = async (id: string) => {
-    await deleteCustomer({ id });
-    window.location.reload();
+  const handleConfirmDelete = (customer: Customer) => {
+    setCustomerToDelete(customer);
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleDeleteConfirmed = async () => {
+    if (!customerToDelete) return;
+
+    await deleteCustomer({ id: customerToDelete.id });
+    setIsConfirmModalOpen(false);
     toast({
       title: "Cliente Deletado",
       description: "O cliente foi removido com sucesso.",
     });
+    window.location.reload();
   };
 
   return (
@@ -109,7 +120,10 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
                         <DropdownMenuItem onClick={() => handleEditCustomer(customer)}>
                           Editar
                         </DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => handleDeleteCustomer(customer.id)} className="text-red-600">
+                        <DropdownMenuItem
+                          onClick={() => handleConfirmDelete(customer)}
+                          className="text-red-600"
+                        >
                           Excluir
                         </DropdownMenuItem>
                       </DropdownMenuContent>
@@ -121,6 +135,7 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
           </Table>
         </div>
       </div>
+
       {isModalOpen && (
         <CustomerModal
           isOpen={isModalOpen}
@@ -131,7 +146,32 @@ export function CustomerDataTable({ data }: CustomerDataTableProps) {
           customer={selectedCustomer}
         />
       )}
+
+      {isConfirmModalOpen && customerToDelete && (
+        <div className="fixed inset-0 z-50 bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-[#132236] p-6 rounded-md w-full max-w-md text-white border border-[#003380] shadow-lg">
+            <h2 className="text-xl font-semibold mb-4">Confirmar exclusão</h2>
+            <p className="mb-6">
+              Tem certeza que deseja excluir o cliente <strong>{customerToDelete.name}</strong>?
+            </p>
+            <div className="flex justify-end gap-2">
+              <Button
+                variant="ghost"
+                onClick={() => setIsConfirmModalOpen(false)}
+                className="bg-[#1f2f46] text-white hover:bg-[#2b3d57]"
+              >
+                Cancelar
+              </Button>
+              <Button
+                className="bg-red-600 hover:bg-red-700 text-white"
+                onClick={handleDeleteConfirmed}
+              >
+                Excluir
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
-
