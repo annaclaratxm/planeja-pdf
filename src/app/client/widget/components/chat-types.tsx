@@ -27,8 +27,11 @@ export interface ChatMessageProps {
 
 // NOVO: Tipo para os Clientes
 export interface CustomerData {
-	id: number;
+	id: string;
 	name: string;
+	phone?: string;
+	email?: string;
+	address?: string | null;
 }
 
 // NOVO: Tipo para os Documentos PDF

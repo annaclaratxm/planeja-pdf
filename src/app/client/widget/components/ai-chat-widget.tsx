@@ -17,7 +17,7 @@ export function AIChatWidget() {
 	const [messages, setMessages] = useState<ChatMessageData[]>([]);
 	const [isPdfMode, setIsPdfMode] = useState(false);
 	const [customers, setCustomers] = useState<CustomerData[]>([]);
-	const [selectedCustomerId, setSelectedCustomerId] = useState<number | null>(null);
+	const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null);
 	const [pdfDocuments, setPdfDocuments] = useState<PdfDocumentData[]>([]);
 	const [isLoading, setIsLoading] = useState(false);
 
@@ -74,6 +74,7 @@ export function AIChatWidget() {
 			const res = await fetch(`${API_URL}/customers?user_id=${userId}`);
 			if (!res.ok) throw new Error("Falha ao buscar clientes");
 			const data: CustomerData[] = await res.json();
+			console.log("Clientes carregados:", data);
 			setCustomers(data);
 		} catch (error) {
 			console.error("Erro ao buscar clientes:", error);
@@ -100,6 +101,14 @@ export function AIChatWidget() {
 		}
 	}, [isOpen, userId]); // Removido fetchs da dependência para evitar loops
 
+	// Limpa a seleção de cliente quando o modo PDF é desabilitado
+	useEffect(() => {
+		if (!isPdfMode && selectedCustomerId) {
+			setSelectedCustomerId(null);
+			console.log("Modo PDF desabilitado - cliente desselecionado");
+		}
+	}, [isPdfMode, selectedCustomerId]);
+
 	const handleSelectSession = (sessionId: string) => {
 		if (sessionId !== currentSessionId) {
 			fetchSessionMessages(sessionId);
@@ -110,6 +119,7 @@ export function AIChatWidget() {
 		setCurrentSessionId(null);
 		setMessages([]);
 		setIsPdfMode(false); // Desativa o modo PDF ao iniciar nova conversa
+		setSelectedCustomerId(null); // Limpa a seleção de cliente
 	};
 
 	const handleSendMessageForChat = async (prompt: string) => {
@@ -155,10 +165,10 @@ export function AIChatWidget() {
 		}
 	};
 
-	const handleGeneratePdf = async (prompt: string) => {
+	const handleGeneratePdf = async (description: string) => {
 		if (!userId || !selectedCustomerId) return;
 
-		const userMessage: ChatMessageData = { id: `user-${Date.now()}`, role: "user", content: `Gerar PDF: ${prompt}` };
+		const userMessage: ChatMessageData = { id: `user-${Date.now()}`, role: "user", content: `Gerar PDF: ${description}` };
 		setMessages((prev) => [...prev, userMessage]);
 		setIsLoading(true);
 
@@ -166,7 +176,7 @@ export function AIChatWidget() {
 			const res = await fetch(`${API_URL}/documents/generate-budget`, {
 				method: "POST",
 				headers: { "Content-Type": "application/json" },
-				body: JSON.stringify({ prompt, user_id: userId, customer_id: selectedCustomerId }),
+				body: JSON.stringify({ description, user_id: userId, customer_id: selectedCustomerId }),
 			});
 
 			if (!res.ok) {
@@ -201,11 +211,11 @@ export function AIChatWidget() {
 		}
 	};
 
-	const handleSendMessage = (prompt: string, pdfMode: boolean) => {
+	const handleSendMessage = (description: string, pdfMode: boolean) => {
 		if (pdfMode) {
-			handleGeneratePdf(prompt);
+			handleGeneratePdf(description);
 		} else {
-			handleSendMessageForChat(prompt);
+			handleSendMessageForChat(description);
 		}
 	};
 
@@ -232,7 +242,10 @@ export function AIChatWidget() {
 						onTogglePdfMode={() => setIsPdfMode(!isPdfMode)}
 						customers={customers}
 						selectedCustomerId={selectedCustomerId}
-						onSelectCustomer={(customerId) => setSelectedCustomerId(Number(customerId))}
+						onSelectCustomer={(customerId) => {
+							console.log("Cliente selecionado:", customerId);
+							setSelectedCustomerId(customerId);
+						}}
 					/>
 				</div>
 			)}

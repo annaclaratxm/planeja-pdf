@@ -12,12 +12,12 @@ import { ChatMessageData, CustomerData } from "./chat-types";
 interface ChatWindowProps {
 	onClose: () => void;
 	messages: ChatMessageData[];
-	onSendMessage: (prompt: string, isPdfMode: boolean) => void;
+	onSendMessage: (input: string, isPdfMode: boolean) => void;
 	isLoading: boolean;
 	isPdfMode: boolean;
 	onTogglePdfMode: () => void;
 	customers: CustomerData[];
-	selectedCustomerId: number | null;
+	selectedCustomerId: string | null;
 	onSelectCustomer: (customerId: string) => void;
 }
 
@@ -34,6 +34,13 @@ export function ChatWindow({
 }: ChatWindowProps) {
 	const [input, setInput] = useState("");
 	const scrollRef = useRef<HTMLDivElement>(null);
+
+	// Debug: Log para verificar os dados dos clientes
+	useEffect(() => {
+		console.log("ChatWindow - Clientes recebidos:", customers);
+		console.log("ChatWindow - Cliente selecionado:", selectedCustomerId);
+		console.log("ChatWindow - Modo PDF:", isPdfMode);
+	}, [customers, selectedCustomerId, isPdfMode]);
 
 	useEffect(() => {
 		if (scrollRef.current) {
@@ -94,18 +101,35 @@ export function ChatWindow({
 				className="p-4 border-t border-gray-700 flex flex-col gap-3 bg-[#0a192f]"
 			>
 				{isPdfMode && (
-					<Select onValueChange={onSelectCustomer} value={selectedCustomerId?.toString()}>
-						<SelectTrigger className="bg-gray-700 border-gray-600 text-white">
-							<SelectValue placeholder="Selecione um cliente para o orçamento..." />
-						</SelectTrigger>
-						<SelectContent>
-							{customers.map((customer) => (
-								<SelectItem key={customer.id} value={customer.id.toString()}>
-									{customer.name}
-								</SelectItem>
-							))}
-						</SelectContent>
-					</Select>
+					<div className="space-y-2">
+						{customers.length === 0 ? (
+							<div className="text-gray-400 text-sm">Carregando clientes...</div>
+						) : (
+							<Select 
+								onValueChange={(value) => {
+									console.log("Valor selecionado no Select:", value);
+									onSelectCustomer(value);
+								}} 
+								value={selectedCustomerId || undefined}
+							>
+								<SelectTrigger className="bg-gray-700 border-gray-600 text-white">
+									<SelectValue placeholder="Selecione um cliente para o orçamento..." />
+								</SelectTrigger>
+								<SelectContent>
+									{customers.map((customer) => (
+										<SelectItem key={customer.id} value={customer.id}>
+											{customer.name}
+										</SelectItem>
+									))}
+								</SelectContent>
+							</Select>
+						)}
+						{selectedCustomerId && (
+							<div className="text-sm text-emerald-400">
+								Cliente selecionado: {customers.find(c => c.id === selectedCustomerId)?.name || "Desconhecido"}
+							</div>
+						)}
+					</div>
 				)}
 				<div className="flex gap-3 items-center">
 					<Input
