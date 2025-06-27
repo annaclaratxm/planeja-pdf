@@ -1,61 +1,60 @@
+// src/app/api/dashboard/route.ts
+
 import { getServerSession } from "next-auth/next";
 import { NextResponse } from "next/server";
-import { authOptions } from "@/lib/auth"; // Ajuste o caminho se for diferente
+import { authOptions } from "@/lib/auth";
 
-// URL da tua API de backend
 const API_URL = process.env.BACKEND_API_URL || "http://127.0.0.1:8000";
 
 export async function GET(request: Request) {
     try {
-        // 1. Obter a sessão do utilizador de forma segura no servidor
         const session = await getServerSession(authOptions);
 
-        // Se não houver sessão ou ID do utilizador, retorna erro de não autorizado
-        // NOTA: O 'id' aqui vem do callback 'session' no teu [...nextauth].ts
         const userId = (session?.user as any)?.id;
         if (!userId) {
             return new NextResponse(
-                JSON.stringify({ message: "Não autorizado" }),
+                JSON.stringify({ message: "Não autorizado: Utilizador não encontrado na sessão." }),
                 { status: 401 }
             );
         }
 
-        // 2. Definir os endpoints do backend que precisamos de chamar
         const endpoints = {
             totalCustomers: `${API_URL}/analysis/total_customers?user_id=${userId}`,
             totalBudgets: `${API_URL}/analysis/total_budgets?user_id=${userId}`,
             conversionRate: `${API_URL}/analysis/conversion_rate?user_id=${userId}`,
         };
 
-        // 3. Fazer as chamadas à API do backend em paralelo
         const [customersRes, budgetsRes, conversionRes] = await Promise.all([
             fetch(endpoints.totalCustomers),
             fetch(endpoints.totalBudgets),
             fetch(endpoints.conversionRate),
         ]);
 
-        // 4. Verificar se todas as respostas do backend foram bem-sucedidas
         if (!customersRes.ok || !budgetsRes.ok || !conversionRes.ok) {
-            // Se alguma falhar, retorna um erro interno
             console.error("Uma ou mais chamadas à API do backend falharam.");
             return new NextResponse(
-                JSON.stringify({ message: "Erro ao comunicar com o serviço de análise." }),
-                { status: 502 } // 502 Bad Gateway é um bom código para este caso
+                JSON.stringify({
+                    message: "Erro ao comunicar com o serviço de análise.",
+                    errors: {
+                        customers: { status: customersRes.status, text: await customersRes.text() },
+                        budgets: { status: budgetsRes.status, text: await budgetsRes.text() },
+                        conversion: { status: conversionRes.status, text: await conversionRes.text() },
+                    }
+                }),
+                { status: 502 }
             );
         }
 
-        // 5. Agregar os dados numa única resposta
         const aggregatedData = {
             totalCustomers: await customersRes.json(),
             totalBudgets: await budgetsRes.json(),
             conversionRate: await conversionRes.json(),
         };
 
-        // 6. Retornar os dados agregados para o frontend
         return NextResponse.json(aggregatedData);
 
     } catch (error) {
-        console.error("Erro no endpoint /api/dashboard:", error);
+        console.error("Erro crítico no endpoint /api/dashboard:", error);
         return new NextResponse(
             JSON.stringify({ message: "Erro interno do servidor." }),
             { status: 500 }
