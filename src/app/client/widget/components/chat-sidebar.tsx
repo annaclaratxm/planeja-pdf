@@ -58,7 +58,6 @@ export function ChatSidebar({
     onAnalysisFetched,
     isAnalysisLoading,
     setIsAnalysisLoading,
-    customers,
     budgets,
     isBudgetsLoading,
     activeTab,
@@ -139,8 +138,8 @@ export function ChatSidebar({
                                     session.id === currentSessionId ? "secondary" : "ghost"
                                 }
                                 className={`w-full justify-start text-left h-auto py-2 px-3 whitespace-normal text-white ${session.id === currentSessionId
-                                        ? "bg-gray-700/60 hover:bg-gray-700"
-                                        : "hover:bg-gray-700/40"
+                                    ? "bg-gray-700/60 hover:bg-gray-700"
+                                    : "hover:bg-gray-700/40"
                                     }`}
                                 onClick={() => onSelectSession(session.id)}
                                 disabled={isChatLoading}

@@ -55,8 +55,12 @@ export function AnalysisPanel({
             }
             const data = await res.json()
             onAnalysisFetched(data.analysis)
-        } catch (err: any) {
-            setError(err.message)
+        } catch (err: unknown) {
+            if (err instanceof Error) {
+                setError(err.message)
+            } else {
+                setError("An unknown error occurred.")
+            }
             onAnalysisFetched("")
         } finally {
             setIsLoading(false)

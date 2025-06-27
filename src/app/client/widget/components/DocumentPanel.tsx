@@ -75,12 +75,20 @@ export function DocumentPanel({ userId, customers }: DocumentPanelProps) {
                 title: "Sucesso!",
                 description: "Seu documento foi gerado e o download foi iniciado.",
             })
-        } catch (error: any) {
-            toast({
-                title: "Erro!",
-                description: error.message || "Não foi possível gerar o documento.",
-                variant: "destructive",
-            })
+        } catch (error: unknown) {
+            if (error instanceof Error) {
+                toast({
+                    title: "Erro!",
+                    description: error.message || "Não foi possível gerar o documento.",
+                    variant: "destructive",
+                })
+            } else {
+                toast({
+                    title: "Erro!",
+                    description: "Não foi possível gerar o documento.",
+                    variant: "destructive",
+                })
+            }
         } finally {
             setIsLoading(false)
         }
