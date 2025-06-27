@@ -10,10 +10,9 @@ import {
 	SelectValue,
 } from "@/components/ui/select"
 import { type Customer } from "@/services/api/customer/types"
-import { Bot, FileUp, Send, User, X } from "lucide-react"
+import { Bot, FileUp, Send, X } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import "github-markdown-css/github-markdown-dark.css"
-import Markdown from "react-markdown"
 import { ChatMessage } from "./chat-message"
 import { ChatMessageData } from "./chat-types"
 
@@ -32,6 +31,8 @@ interface ChatWindowProps {
 	customers: CustomerData[]
 	selectedCustomerId: string | null
 	onSelectCustomer: (customerId: string) => void
+	outputFormat: 'pdf' | 'docx'
+	onOutputFormatChange: (format: 'pdf' | 'docx') => void
 }
 
 export function ChatWindow({
@@ -43,6 +44,8 @@ export function ChatWindow({
 	customers,
 	selectedCustomerId,
 	onSelectCustomer,
+	outputFormat,
+	onOutputFormatChange,
 }: ChatWindowProps) {
 	const [input, setInput] = useState("")
 	const scrollRef = useRef<HTMLDivElement>(null)
@@ -105,7 +108,7 @@ export function ChatWindow({
 
 			<form onSubmit={handleSubmit} className="bg-[#0a192f]">
 				{isDocumentMode && (
-					<div className="p-3 border-t border-b border-gray-700">
+					<div className="p-3 border-t border-b border-gray-700 space-y-3">
 						<Select
 							value={selectedCustomerId || ""}
 							onValueChange={onSelectCustomer}
@@ -121,6 +124,23 @@ export function ChatWindow({
 								))}
 							</SelectContent>
 						</Select>
+						
+						<Select
+							value={outputFormat}
+							onValueChange={onOutputFormatChange}
+						>
+							<SelectTrigger className="w-full bg-gray-700 border-gray-600 text-white">
+								<SelectValue placeholder="Selecione o formato do documento" />
+							</SelectTrigger>
+							<SelectContent className="bg-gray-800 text-white">
+								<SelectItem value="pdf">
+									📄 PDF - Formato padrão para visualização
+								</SelectItem>
+								<SelectItem value="docx">
+									📝 DOCX - Documento editável do Word
+								</SelectItem>
+							</SelectContent>
+						</Select>
 					</div>
 				)}
 				<div className="p-4 flex gap-3 items-center">
@@ -129,7 +149,7 @@ export function ChatWindow({
 						onChange={(e) => setInput(e.target.value)}
 						placeholder={
 							isDocumentMode
-								? "Descreva o orçamento para gerar o PDF..."
+								? `Descreva o orçamento para gerar o ${outputFormat.toUpperCase()}...`
 								: "Digite sua mensagem aqui..."
 						}
 						className="flex-1 bg-gray-700 border-gray-600 text-white placeholder-gray-400 focus:border-emerald-500 focus:ring-emerald-500"

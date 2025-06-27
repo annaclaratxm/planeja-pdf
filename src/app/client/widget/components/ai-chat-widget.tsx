@@ -44,6 +44,7 @@ export function AIChatWidget() {
 	const [selectedCustomerId, setSelectedCustomerId] = useState<string | null>(null)
 	const [budgets, setBudgets] = useState<BudgetType[]>([])
 	const [isBudgetsLoading, setIsBudgetsLoading] = useState(false)
+	const [outputFormat, setOutputFormat] = useState<'pdf' | 'docx'>('pdf')
 
 	useEffect(() => {
 		const id = localStorage.getItem("user_id")
@@ -226,7 +227,7 @@ export function AIChatWidget() {
 					customer_id: selectedCustomerId,
 					user_id: userId,
 					description,
-					output_format: "pdf",
+					output_format: outputFormat,
 				}),
 			})
 			if (!response.ok)
@@ -237,7 +238,7 @@ export function AIChatWidget() {
 			const url = window.URL.createObjectURL(blob)
 			const a = document.createElement("a")
 			a.href = url
-			a.download = `orcamento-${selectedCustomerId}.pdf`
+			a.download = `orcamento-${selectedCustomerId}.${outputFormat}`
 			document.body.appendChild(a)
 			a.click()
 			a.remove()
@@ -246,10 +247,10 @@ export function AIChatWidget() {
 				title: "Sucesso!",
 				description: "Seu documento foi gerado e o download foi iniciado.",
 			})
-		} catch (error: any) {
+		} catch (error: unknown) {
 			toast({
 				title: "Erro!",
-				description: error.message || "Não foi possível gerar o documento.",
+				description: error instanceof Error ? error.message : "Não foi possível gerar o documento.",
 				variant: "destructive",
 			})
 		} finally {
@@ -309,6 +310,8 @@ export function AIChatWidget() {
 								customers={customers}
 								selectedCustomerId={selectedCustomerId}
 								onSelectCustomer={setSelectedCustomerId}
+								outputFormat={outputFormat}
+								onOutputFormatChange={setOutputFormat}
 							/>
 						)}
 					</div>
